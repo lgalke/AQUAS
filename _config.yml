@@ -3,7 +3,7 @@ description: Automatic Quality Assessment NLP approach for the semantic mapping 
 
 google_analytics: 
 show_downloads: true
-theme: Dinky
+theme: Modernist
 
 gems:
   - jekyll-mentions
