@@ -1,0 +1,9 @@
+title: AQUAS
+description: Automatic Quality Assessment NLP approach for the semantic mapping of texts in the life science
+
+google_analytics: 
+show_downloads: true
+theme: Dinky
+
+gems:
+  - jekyll-mentions
