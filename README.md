@@ -11,6 +11,9 @@ AQUAS aims at supporting the reader in making an informed assessment of literatu
 
 Thereby AQUAS does not aim at a final reading recommendation of the contents or censorship. Based on the developed enrichment methods, AQUAS will implement a service that can be accessed via an application programming interface (API). As a first central application we will use this service through the ZB MED discovery system LIVIVO to make the described classification of literature available to the users of ZB MED. This will initially be used by the scientists of the and practitioners in the health care professions as well as students will benefit from the improved knowledge infrastructure at LIVIVO through AQUAS. The dataset, the model, the workflow for the training and the software for the operation of the service will be made openly available, if possible. and thus also made usable for other subject areas.
 
+AQUAS at [ZB MED](https://www.zbmed.de/forschen/laufende-projekte/aquas/)
+
+
 ## Publications 
 
 ## Dataset
@@ -21,8 +24,7 @@ Thereby AQUAS does not aim at a final reading recommendation of the contents or 
 [Deutsches Ärzteblatt: Künstliche Intelligenz soll Fake News bei medizinischen Informationen erkennen, 2022-12-27](https://www.aerzteblatt.de/nachrichten/139246/Kuenstliche-Intelligenz-soll-Fake-News-bei-medizinischen-Informationen-erkennen)<br/>
 [B.I.T.-online: ZB MED sagt Falschinformationen den Kampf an, 2023-01-06](https://www.b-i-t-online.de/neues/7715)<br/>
 [Fachbuchjournal: ZB MED sagt Falschinformationen den Kampf an, 2023](https://www.fachbuchjournal.de/zb-med-sagt-falschinformationen-den-kampf-an/)<br/>
-[German Circle (privater Blog), 2023-01-14](https://germancircle.blogspot.com/2023/01/aquas-gegen-falschinformationen.html<br/>
-
+[German Circle (privater Blog), 2023-01-14](https://germancircle.blogspot.com/2023/01/aquas-gegen-falschinformationen.html)<br/>
 
 
 ## Responsible
