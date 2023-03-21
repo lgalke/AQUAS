@@ -6,10 +6,6 @@ import argparse
 import  sys
 
 def load_dataset():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input_file_csv')
-    args = parser.parse_args()
-
     # Load dataset
     df = pd.read_csv(args.input_file_csv, sep=',')
     df = df.sample(frac=1)
@@ -69,7 +65,11 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
 
 def main():
-    texts, labels = load_dataset()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file_csv')
+    args = parser.parse_args()
+
+    texts, labels = load_dataset(args.input_file_csv)
     inputs = tokenize(texts)
     labels_conv = convert_labels(labels)
     split_ratio = calc_split_ratio(labels_conv)
