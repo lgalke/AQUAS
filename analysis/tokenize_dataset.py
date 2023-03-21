@@ -2,12 +2,16 @@ import pandas as pd
 from transformers import BertTokenizer, TFBertForSequenceClassification
 import numpy as np
 import tensorflow as tf
-import csv
+import argparse
 import  sys
 
 def load_dataset():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file_csv')
+    args = parser.parse_args()
+
     # Load dataset
-    df = pd.read_csv('/home/ruth/ProgrammingProjects/AQUS/AQUAS/data/ready_dataset.csv', sep=',')
+    df = pd.read_csv(args.input_file_csv, sep=',')
     df = df.sample(frac=1)
     df = df.astype(str)
     texts = df['text'].to_list()
