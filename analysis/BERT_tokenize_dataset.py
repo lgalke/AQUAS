@@ -3,7 +3,12 @@ from transformers import BertTokenizer, TFBertForSequenceClassification
 import numpy as np
 import tensorflow as tf
 import argparse
-import  sys
+import os
+
+#os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" #If the line below doesn't work, uncomment this line (make sure to comment the line below); it should help.
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+#Your Code Here
+
 
 def load_dataset():
     # Load dataset
