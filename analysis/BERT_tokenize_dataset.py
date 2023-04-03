@@ -1,9 +1,20 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+__description__ = "train datatset with BERT"
+__author__ = "Eva Seidlmayer <seidlmayer@zbmed.de>"
+__copyright__ = "2023 by Eva Seidlmayer"
+__license__ = "ISC license"
+__email__ = "seidlmayer@zbmed.de"
+__version__ = "1 "
+
 import pandas as pd
 from transformers import BertTokenizer, TFBertForSequenceClassification
 import numpy as np
 import tensorflow as tf
 import argparse
 import os
+from sklearn.metrics import f1_score
 
 #os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" #If the line below doesn't work, uncomment this line (make sure to comment the line below); it should help.
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -52,7 +63,7 @@ def split_train_val_data(inputs, split_ratio, labels_conv):
     return train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels
 
 def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels):
-    # Fine-tune a pre-trained BERT model
+    # Fine-tune pre-trained BERT model
     model = TFBertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
     optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
     model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
@@ -62,10 +73,10 @@ def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_label
 
 
 def evaluate_model(model, val_inputs, val_masks, val_labels):
-    # Evaluate your model
+    # Evaluate  model
     results = model.evaluate([val_inputs, val_masks], val_labels, batch_size=8)
-    print("Validation Loss: {:.4f} Accuracy: {:.4f}".format(*results))
-
+    #print("Validation Loss: {:.4f} Accuracy: {:.4f}".format(*results))
+    print("Validation Loss: {:.4f} Accuracy: {:.4f} F1-score: {:.4f}".format(*results, f1_score(val_labels.argmax(axis=1), model.predict([val_inputs, val_masks]).argmax(axis=1), average='weighted')))
 
 
 
