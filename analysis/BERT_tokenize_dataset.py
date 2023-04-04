@@ -21,9 +21,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 #Your Code Here
 
 
-def load_dataset():
+def load_dataset(input_file_csv):
     # Load dataset
-    df = pd.read_csv(args.input_file_csv, sep=',')
+    df = pd.read_csv(input_file_csv, sep=',')
     df = df.sample(frac=1)
     df = df.astype(str)
     texts = df['text'].to_list()
