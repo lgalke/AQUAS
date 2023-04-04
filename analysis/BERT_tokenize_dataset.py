@@ -28,7 +28,7 @@ def load_dataset(input_file_csv):
     df = df.astype(str)
     texts = df['text'].to_list()
     labels = df['category-id'].to_list()
-    print('lists created')
+    print('data input lists created')
     return texts, labels
 
 def tokenize(texts):
@@ -75,8 +75,12 @@ def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_label
 def evaluate_model(model, val_inputs, val_masks, val_labels):
     # Evaluate  model
     results = model.evaluate([val_inputs, val_masks], val_labels, batch_size=8)
-    #print("Validation Loss: {:.4f} Accuracy: {:.4f}".format(*results))
-    print("Validation Loss: {:.4f} Accuracy: {:.4f} F1-score: {:.4f}".format(*results, f1_score(val_labels.argmax(axis=1), model.predict([val_inputs, val_masks]).argmax(axis=1), average='weighted')))
+
+    output = model.predict([val_inputs, val_masks])
+    predicted_labels = output.logits.argmax(axis=1)
+    f1 = f1_score(val_labels.argmax(axis=1), predicted_labels, average='weighted')
+
+    print("Validation Loss: {:.4f} Accuracy: {:.4f} F1-score: {:.4f}".format(*results, f1))
 
 
 
