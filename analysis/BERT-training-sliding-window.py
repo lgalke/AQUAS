@@ -39,7 +39,7 @@ def tokenize(texts):
 
     # Tokenize the text data
     tokens = tokenizer(texts, max_length=max_length, padding='max_length', truncation=True, return_tensors="tf")
-    print('text of one item is tokenized')
+    print('text is tokenized')
     return tokens
 
 
