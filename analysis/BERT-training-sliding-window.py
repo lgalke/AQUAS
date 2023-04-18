@@ -10,6 +10,7 @@ __version__ = "1 "
 
 import pandas as pd
 from transformers import BertTokenizer, TFBertForSequenceClassification, BertForPreTraining
+from transformers import add_start_docstrings_to_model_forward, add_code_sample_docstrings
 import numpy as np
 import tensorflow as tf
 import argparse
@@ -132,8 +133,10 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
                     AQUASwindowsvectors.append(pooled_output)
                     AQUASnumberwindows += 1
                 #sum and mean
-                AQUASpooled_output = [sum(i) for i in zip(*AQUASwindowsvectors)] / AQUASnumberwindows
-
+                #AQUASpooled_output = [sum(i) for i in zip(*AQUASwindowsvectors)] / AQUASnumberwindows
+                AQUASpooled_output = tf.reduce_sum(AQUASwindowsvectors, 0)
+                AQUASpooled_output = tf.divide(AQUASpooled_output/AQUASnumberwindows)
+                return AQUASpooled_output
             else:
                 #replaced "self" by "item"
                 outputs = item.bert(
@@ -148,7 +151,7 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
                     return_dict=return_dict,
                 )
                 AQUASpooled_output = outputs[1]
-
+                return AQUASpooled_output
 
         pooled_output = self.dropout(AQUASpooled_output)
         logits = self.classifier(pooled_output)
