@@ -9,7 +9,7 @@ __email__ = "seidlmayer@zbmed.de"
 __version__ = "1 "
 
 import pandas as pd
-from transformers import BertTokenizer, TFBertForSequenceClassification, BertForPreTraining
+from transformers import BertTokenizer, BertForSequenceClassification, BertForPreTraining
 from transformers import add_start_docstrings_to_model_forward, add_code_sample_docstrings
 import numpy as np
 import tensorflow as tf
@@ -76,7 +76,7 @@ def sliding_window(item):
     windows = [item[i:i+window_size] for i in range(0, len(item)-window_size+1, stride)]
     return windows
 
-class AQUAS_slidingwindow(TFBertForSequenceClassification):
+class AQUAS_slidingwindow(BertForSequenceClassification):
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
     @add_code_sample_docstrings(
         checkpoint=_CHECKPOINT_FOR_SEQUENCE_CLASSIFICATION,
@@ -85,6 +85,8 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
         expected_output=_SEQ_CLASS_EXPECTED_OUTPUT,
         expected_loss=_SEQ_CLASS_EXPECTED_LOSS,
     )
+    #AQUASbert = AQUAS_slidingwindow.from_pretrained('bert-base-uncased')
+
     def forward(
             self,
             input_ids: Optional[torch.Tensor] = None,
@@ -108,7 +110,7 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
 
         AQUASwindowsvectors = []
         AQUASnumberwindows = 0
-        for item in self:
+        for item in input_ids:
             if len(item) > 512:
                 windows = sliding_window(item)
                 for window in windows:
@@ -116,7 +118,7 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
                     #vector.append(finetune_windw)
 
                     # replaced "self" by "window"
-                    outputs = window.bert(
+                    outputs = window.AQUASbert(
                         input_ids,
                         attention_mask=attention_mask,
                         token_type_ids=token_type_ids,
@@ -139,7 +141,7 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
                 return AQUASpooled_output
             else:
                 #replaced "self" by "item"
-                outputs = item.bert(
+                outputs = item.AQUASbert(
                     input_ids,
                     attention_mask=attention_mask,
                     token_type_ids=token_type_ids,
@@ -195,14 +197,14 @@ class AQUAS_slidingwindow(TFBertForSequenceClassification):
 '''
 def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels):
     # Fine-tune pre-trained BERT model
-    model = TFBertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
+    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
     optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
     model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
 '''
 
 
 def fit_model(train_inputs_prep, val_inputs_prep,train_masks, val_masks, train_labels, val_labels):
-    model = TFBertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
+    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
     optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
     model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
     model.fit([train_inputs_prep, train_masks], train_labels, validation_data=([val_inputs_prep, val_masks], val_labels), epochs=3, batch_size=8)
@@ -231,6 +233,7 @@ def main():
     labels_conv = convert_labels(labels)
     split_ratio = calc_split_ratio(labels_conv)
     train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels= split_train_val_data(tokens, split_ratio, labels_conv)
+    #AQUASbert = AQUAS_slidingwindow.from_pretrained('bert-base-uncased')
     train_inputs_prep = AQUAS_slidingwindow(train_inputs)
     val_inputs_prep = AQUAS_slidingwindow(val_inputs)
     model = fit_model(train_inputs_prep, val_inputs_prep, train_masks, val_masks, train_labels, val_labels)
