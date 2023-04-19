@@ -11,7 +11,6 @@ __version__ = "1 "
 import pandas as pd
 from transformers import BertTokenizer, BertForSequenceClassification, BertForPreTraining
 import numpy as np
-import tensorflow as tf
 import argparse
 import os
 from sklearn.metrics import f1_score
@@ -75,7 +74,7 @@ def sliding_window(item):
     windows = [item[i:i+window_size] for i in range(0, len(item)-window_size+1, stride)]
     return windows
 
-class AQUAS_slidingwindow(BertForSequenceClassification):
+class AQUASSlidingBERT(BertForSequenceClassification):
     def forward(
             self,
             input_ids: Optional[torch.Tensor] = None,
@@ -99,7 +98,7 @@ class AQUAS_slidingwindow(BertForSequenceClassification):
 
         AQUASwindowsvectors = []
         AQUASnumberwindows = 0
-        for item in input_ids:
+        for item in input_ids: 
             if len(item) > 512:
                 windows = sliding_window(item)
                 for window in windows:
@@ -182,22 +181,42 @@ class AQUAS_slidingwindow(BertForSequenceClassification):
     print('sliding window: check!')
 
 
-#
-'''
-def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels):
-    # Fine-tune pre-trained BERT model
-    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
-    optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
-    model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-'''
+
+#def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels):
+#    # Fine-tune pre-trained BERT model
+#    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
+#    optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
+#    model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
 
 
-def fit_model(train_inputs_prep, val_inputs_prep,train_masks, val_masks, train_labels, val_labels):
-    AQUASbert = AQUAS_slidingwindow.from_pretrained('bert-base-uncased')
-    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
-    optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
-    model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-    model.AQUASbert([train_inputs_prep, train_masks], train_labels, validation_data=([val_inputs_prep, val_masks], val_labels), epochs=3, batch_size=8)
+def train_epoch(model, optimizer, train_inputs_prep, val_inputs_prep,train_masks, val_masks, train_labels, val_labels):
+    #optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
+
+    # bisher: batch size 1, mehr spaeter
+    train_loader = torch.data.DataLoader(zip(train_inputs_prep, train_labels), batch_size=1, shuffle=True)
+
+
+    # Trainiert fuer eine Epoche
+    for batch in train_loader:
+        optimizer.zero_grad()
+
+        # batch auseinanerfriemeln
+        batch_inputs, batch_labels = batch
+
+
+        output = model(input_id=batch_inputs, labels=batch_labels)
+        # output: SequenceClassifierOutput
+        loss = output['loss'] # oder       output.loss
+
+        loss.backward()
+        optimizer.step()
+
+
+
+    
+
+    #model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
+    #model.AQUASbert([train_inputs_prep, train_masks], train_labels, validation_data=([val_inputs_prep, val_masks], val_labels), epochs=3, batch_size=8)
     #print('BERT fine tuned')
     print('model trained')
     return model
@@ -212,7 +231,6 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     print('Validation Loss: {:.4f} Accuracy: {:.4f} F1-score: {:.4f}'.format(*results, f1))
 
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file_csv')
@@ -224,9 +242,18 @@ def main():
     split_ratio = calc_split_ratio(labels_conv)
     train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels= split_train_val_data(tokens, split_ratio, labels_conv)
 
-    train_inputs_prep = AQUAS_slidingwindow(train_inputs)
-    val_inputs_prep = AQUAS_slidingwindow(val_inputs)
-    model = fit_model(train_inputs_prep, val_inputs_prep, train_masks, val_masks, train_labels, val_labels)
+    #train_inputs_prep = AQUAS_slidingwindow(train_inputs)
+    #val_inputs_prep = AQUAS_slidingwindow(val_inputs)
+    # BERT INIT
+    # model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
+
+    # OUR BERT INIT
+    model = AQUASSlidingBERT.from_pretrained('bert-base-uncased', num_labels=3)  # BioBERT statt bert-base-uncased
+    optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)
+
+    for epoch in range(10):
+        train_epoch(model, optimizer, train_inputs_prep, val_inputs_prep, train_masks, val_masks, train_labels, val_labels)
+
     evaluate_model(model, val_inputs, val_masks, val_labels)
 
 
