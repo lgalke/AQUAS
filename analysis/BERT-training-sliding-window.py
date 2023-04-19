@@ -10,7 +10,6 @@ __version__ = "1 "
 
 import pandas as pd
 from transformers import BertTokenizer, BertForSequenceClassification, BertForPreTraining
-from transformers import add_start_docstrings_to_model_forward, add_code_sample_docstrings
 import numpy as np
 import tensorflow as tf
 import argparse
@@ -118,7 +117,7 @@ class AQUAS_slidingwindow(BertForSequenceClassification):
                     #vector.append(finetune_windw)
 
                     # replaced "self" by "window"
-                    outputs = window.AQUASbert(
+                    outputs = window.Sbert(
                         input_ids,
                         attention_mask=attention_mask,
                         token_type_ids=token_type_ids,
@@ -204,10 +203,11 @@ def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_label
 
 
 def fit_model(train_inputs_prep, val_inputs_prep,train_masks, val_masks, train_labels, val_labels):
+    AQUASbert = AQUAS_slidingwindow.from_pretrained('bert-base-uncased')
     model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
     optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
     model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-    model.fit([train_inputs_prep, train_masks], train_labels, validation_data=([val_inputs_prep, val_masks], val_labels), epochs=3, batch_size=8)
+    model.AQUASbert([train_inputs_prep, train_masks], train_labels, validation_data=([val_inputs_prep, val_masks], val_labels), epochs=3, batch_size=8)
     #print('BERT fine tuned')
     print('model trained')
     return model
@@ -233,7 +233,7 @@ def main():
     labels_conv = convert_labels(labels)
     split_ratio = calc_split_ratio(labels_conv)
     train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels= split_train_val_data(tokens, split_ratio, labels_conv)
-    #AQUASbert = AQUAS_slidingwindow.from_pretrained('bert-base-uncased')
+
     train_inputs_prep = AQUAS_slidingwindow(train_inputs)
     val_inputs_prep = AQUAS_slidingwindow(val_inputs)
     model = fit_model(train_inputs_prep, val_inputs_prep, train_masks, val_masks, train_labels, val_labels)
