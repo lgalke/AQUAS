@@ -17,6 +17,7 @@ from sklearn.metrics import f1_score
 import torch
 from typing import Optional, Union, Tuple
 from transformers.modeling_outputs import SequenceClassifierOutput
+import tensorflow as tf
 
 def load_dataset(input_file_csv):
     # Load dataset
@@ -178,7 +179,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
-    print('sliding window: check!')
+        print('sliding window: check!')
 
 
 
