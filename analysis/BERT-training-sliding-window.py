@@ -76,16 +76,6 @@ def sliding_window(item):
     return windows
 
 class AQUAS_slidingwindow(BertForSequenceClassification):
-    @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
-    @add_code_sample_docstrings(
-        checkpoint=_CHECKPOINT_FOR_SEQUENCE_CLASSIFICATION,
-        output_type=SequenceClassifierOutput,
-        config_class=_CONFIG_FOR_DOC,
-        expected_output=_SEQ_CLASS_EXPECTED_OUTPUT,
-        expected_loss=_SEQ_CLASS_EXPECTED_LOSS,
-    )
-    #AQUASbert = AQUAS_slidingwindow.from_pretrained('bert-base-uncased')
-
     def forward(
             self,
             input_ids: Optional[torch.Tensor] = None,
