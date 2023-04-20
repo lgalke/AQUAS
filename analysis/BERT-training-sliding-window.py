@@ -71,7 +71,6 @@ def split_train_val_data(tokens, split_ratio, labels_conv):
 def sliding_window(item):
     window_size = 512
     stride = 256
-    #elem = item.split()
     windows = [item[i:i+window_size] for i in range(0, len(item)-window_size+1, stride)]
     return windows
 
@@ -89,12 +88,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             output_hidden_states: Optional[bool] = None,
             return_dict: Optional[bool] = None,
     ) -> Union[Tuple[torch.Tensor], SequenceClassifierOutput]:
-        r"""
-        labels (`torch.LongTensor` of shape `(batch_size,)`, *optional*):
-            Labels for computing the sequence classification/regression loss. Indices should be in `[0, ...,
-            config.num_labels - 1]`. If `config.num_labels == 1` a regression loss is computed (Mean-Square loss), If
-            `config.num_labels > 1` a classification loss is computed (Cross-Entropy).
-        """
+
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         AQUASwindowsvectors = []
@@ -125,6 +119,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                     AQUASnumberwindows += 1
                 #sum and mean
                 #AQUASpooled_output = [sum(i) for i in zip(*AQUASwindowsvectors)] / AQUASnumberwindows
+                # lässt isch das in einer Zeile erledigen?
                 AQUASpooled_output = tf.reduce_sum(AQUASwindowsvectors, 0)
                 AQUASpooled_output = tf.divide(AQUASpooled_output/AQUASnumberwindows)
                 return AQUASpooled_output
@@ -183,21 +178,14 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
 
 
-#def fine_tune_BERT(train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels):
-#    # Fine-tune pre-trained BERT model
-#    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
-#    optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
-#    model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-
-
-def train_epoch(model, optimizer, train_inputs, val_inputs,train_masks, val_masks, train_labels, val_labels):
+def train_epoch(model, optimizer, train_inputs, train_labels):
     #optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
 
     # bisher: batch size 1, mehr spaeter
     train_loader = torch.data.DataLoader(zip(train_inputs, train_labels), batch_size=1, shuffle=True)
 
 
-    # Trainiert fuer eine Epoche
+    # training for one epoch
     for batch in train_loader:
         optimizer.zero_grad()
 
@@ -238,14 +226,15 @@ def main():
     train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels= split_train_val_data(tokens, split_ratio, labels_conv)
 
 
-    # OUR BERT INIT
+    # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained('bert-base-uncased', num_labels=3)  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)
 
+    # each loop is one epoch
     for epoch in range(10):
-        train_epoch(model, optimizer, train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels)
+        train_epoch(model, optimizer, train_inputs, train_masks)
 
     evaluate_model(model, val_inputs, val_masks, val_labels)
-
+    # was ist denn mit den train/validation masks?
 
 main()
