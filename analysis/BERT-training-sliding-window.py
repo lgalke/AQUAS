@@ -15,9 +15,10 @@ import argparse
 import os
 from sklearn.metrics import f1_score
 import torch
+import torch.nn as nn
 from typing import Optional, Union, Tuple
 from transformers.modeling_outputs import SequenceClassifierOutput
-import tensorflow as tf
+
 
 def load_dataset(input_file_csv):
     # Load dataset
@@ -38,7 +39,7 @@ def tokenize(texts):
     max_length = 100000
 
     # Tokenize the text data
-    tokens = tokenizer(texts, max_length=max_length, padding='max_length', truncation=True, return_tensors="tf")
+    tokens = tokenizer(texts, max_length=max_length, padding='max_length', truncation=True)
     print('text is tokenized')
     return tokens
 
@@ -47,7 +48,8 @@ def convert_labels(labels):
     # Convert labels to numerical values
     label_map = {'1': 0, '2': 1, '3': 2}
     labels = [label_map[label] for label in labels]
-    labels_conv = tf.keras.utils.to_categorical(labels, num_classes=3)
+    labels_conv = torch.tensor(labels)
+
     print('labels converted')
     return labels_conv
 
@@ -118,11 +120,10 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                     AQUASwindowsvectors.append(pooled_output)
                     AQUASnumberwindows += 1
                 #sum and mean
-                #AQUASpooled_output = [sum(i) for i in zip(*AQUASwindowsvectors)] / AQUASnumberwindows
-                # lässt isch das in einer Zeile erledigen?
-                AQUASpooled_output = tf.reduce_sum(AQUASwindowsvectors, 0)
-                AQUASpooled_output = tf.divide(AQUASpooled_output/AQUASnumberwindows)
-                return AQUASpooled_output
+                #AQUASpooled_output = [sum(i) for i in AQUASwindowsvectors] / AQUASnumberwindows
+                AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
+
+
             else:
                 #replaced "self" by "item"
                 outputs = item.AQUASbert(
@@ -137,7 +138,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                     return_dict=return_dict,
                 )
                 AQUASpooled_output = outputs[1]
-                return AQUASpooled_output
+
 
         pooled_output = self.dropout(AQUASpooled_output)
         logits = self.classifier(pooled_output)
@@ -153,16 +154,16 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                     self.config.problem_type = "multi_label_classification"
 
             if self.config.problem_type == "regression":
-                loss_fct = MSELoss()
+                loss_fct = nn.MSELoss()
                 if self.num_labels == 1:
                     loss = loss_fct(logits.squeeze(), labels.squeeze())
                 else:
                     loss = loss_fct(logits, labels)
             elif self.config.problem_type == "single_label_classification":
-                loss_fct = CrossEntropyLoss()
+                loss_fct = nn.CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             elif self.config.problem_type == "multi_label_classification":
-                loss_fct = BCEWithLogitsLoss()
+                loss_fct = nn.BCEWithLogitsLoss()
                 loss = loss_fct(logits, labels)
         if not return_dict:
             output = (logits,) + outputs[2:]
@@ -178,11 +179,11 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
 
 
-def train_epoch(model, optimizer, train_inputs, train_labels):
+def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
     #optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
 
     # bisher: batch size 1, mehr spaeter
-    train_loader = torch.data.DataLoader(zip(train_inputs, train_labels), batch_size=1, shuffle=True)
+    train_loader = torch.data.DataLoader(zip(train_inputs, train_labels, train_masks), batch_size=1, shuffle=True)
 
 
     # training for one epoch
@@ -190,11 +191,11 @@ def train_epoch(model, optimizer, train_inputs, train_labels):
         optimizer.zero_grad()
 
         # batch auseinanerfriemeln
-        batch_inputs, batch_labels = batch
-        output = model(input_id=batch_inputs, labels=batch_labels)
+        batch_inputs, batch_labels, batch_masks = batch
+        output = model(input_id=batch_inputs, labels=batch_labels, attention_mask=batch_masks)
 
         # output: SequenceClassifierOutput
-        loss = output['loss'] # oder       output.loss
+        loss = output['loss'] # oder output.loss
 
         loss.backward()
         optimizer.step()
@@ -232,9 +233,9 @@ def main():
 
     # each loop is one epoch
     for epoch in range(10):
-        train_epoch(model, optimizer, train_inputs, train_masks)
+        train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
 
     evaluate_model(model, val_inputs, val_masks, val_labels)
-    # was ist denn mit den train/validation masks?
+
 
 main()
