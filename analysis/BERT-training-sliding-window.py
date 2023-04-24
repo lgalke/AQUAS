@@ -203,7 +203,7 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
     # optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
 
     # bisher: batch size 1, mehr spaeter
-    train_loader = torch.data.DataLoader(
+    train_loader = torch.utils.data.DataLoader(
         zip(train_inputs, train_labels, train_masks), batch_size=1, shuffle=True
     )
 
@@ -297,6 +297,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     wandb.watch(model)
+    print('weight and biases is tracking')
 
     # each loop is one epoch
     for epoch in range(epochs):
