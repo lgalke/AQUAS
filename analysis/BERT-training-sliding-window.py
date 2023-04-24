@@ -240,7 +240,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     with torch.no_grad():
         model.eval()
         for batch_input, batch_mask in val_loader:
-            outputs = model(input_id=batch_input, attention_mask=val_mask)
+            outputs = model(input_id=batch_input, attention_mask=val_masks)
             logits = outputs[1]
             predicted_class = torch.argmax(logits, dim=1)
 
