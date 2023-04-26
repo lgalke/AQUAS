@@ -124,7 +124,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                     # vector.append(finetune_windw)
 
                     # replaced "self" by "window"
-                    outputs = window.Sbert(
+                    outputs = window.AQUASbert(
                         input_ids,
                         attention_mask=attention_mask,
                         token_type_ids=token_type_ids,
