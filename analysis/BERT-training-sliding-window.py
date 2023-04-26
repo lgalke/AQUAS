@@ -215,7 +215,7 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
         # batch auseinanerfriemeln
         batch_inputs, batch_labels, batch_masks = batch
         output = model(
-            input_id=batch_inputs, labels=batch_labels, attention_mask=batch_masks
+            input_ids=batch_inputs, labels=batch_labels, attention_mask=batch_masks
         )
 
         # output: SequenceClassifierOutput
