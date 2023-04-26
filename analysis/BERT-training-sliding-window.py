@@ -122,9 +122,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 for window in windows:
                     # finetune_windw = fine_tune_BERT(window)
                     # vector.append(finetune_windw)
-
-                    # replaced "self" by "window"
-                    outputs = window.AQUASbert(
+                    outputs = window.bert(
                         input_ids,
                         attention_mask=attention_mask,
                         token_type_ids=token_type_ids,
@@ -145,8 +143,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
 
             else:
-                # replaced "self" by "item"
-                outputs = item.AQUASbert(
+                outputs = item.bert(
                     input_ids,
                     attention_mask=attention_mask,
                     token_type_ids=token_type_ids,
