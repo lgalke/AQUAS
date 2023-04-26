@@ -203,8 +203,9 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
     # optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5, epsilon=1e-08, clipnorm=1.0)
 
     # bisher: batch size 1, mehr spaeter
+
     train_loader = torch.utils.data.DataLoader(
-        zip(train_inputs, train_labels, train_masks), batch_size=1, shuffle=True
+        zip(list(train_inputs), list(train_labels), list(train_masks)), batch_size=1, shuffle=True
     )
 
     # training for one epoch
