@@ -120,8 +120,10 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             if len(item) > 512:
                 windows = sliding_window(item)
                 for window in windows:
+                    input_ids = window
+
                     outputs = self.bert(
-                        window,
+                        input_ids,
                         attention_mask=attention_mask,
                         token_type_ids=token_type_ids,
                         position_ids=position_ids,
