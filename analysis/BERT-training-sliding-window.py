@@ -116,6 +116,8 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         AQUASwindowsvectors = []
         AQUASnumberwindows = 0
+
+        input_ids = input_ids.unsqueeze(0)
         print(input_ids.size())
         for item in input_ids:
             if len(item) > 512:
