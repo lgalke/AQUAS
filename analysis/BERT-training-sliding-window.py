@@ -49,7 +49,7 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 100000
+    #max_length = 100000
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -228,7 +228,7 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
 def evaluate_model(model, val_inputs, val_masks, val_labels):
     # Evaluate  model
     val_loader = torch.utils.data.DataLoader(
-        zip(val_inputs, val_masks),
+        list(zip(val_inputs, val_masks)),
         batch_size=1,
         shuffle=False,  # Never change to True, else all will break
     )
