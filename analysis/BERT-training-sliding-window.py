@@ -143,7 +143,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
             else:
                 outputs = self.bert(
-                    input_ids,
+                    item,
                     attention_mask=attention_mask,
                     token_type_ids=token_type_ids,
                     position_ids=position_ids,
