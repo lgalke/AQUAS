@@ -142,6 +142,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
 
             else:
+                print(item.size())
                 outputs = self.bert(
                     item,
                     attention_mask=attention_mask,
