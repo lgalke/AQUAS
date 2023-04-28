@@ -49,11 +49,11 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    #max_length = 100000
+    max_length = 2048
 
     # Tokenize the text data
     tokens = tokenizer(
-        texts, padding="max_length", truncation=True
+        texts,max_length =max_length, padding="max_length", truncation=True
     )
     print("text is tokenized")
     return tokens
@@ -118,6 +118,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         AQUASnumberwindows = 0
         print(input_ids.size())
         for item in input_ids:
+            print(item)
             if len(item) > 512:
                 windows = sliding_window(item)
                 for window in windows:
