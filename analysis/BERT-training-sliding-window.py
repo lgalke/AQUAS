@@ -152,7 +152,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 )
                 # get the vector
                 pooled_output = outputs[1]
-
+                print(outputs)
                 AQUASwindowsvectors.append(pooled_output)
                 AQUASnumberwindows += 1
             # sum and mean
