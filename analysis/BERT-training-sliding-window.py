@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __description__ = "train datatset with BERT using sliding windows approach"
-__author__ = "Eva Seidlmayer <seidlmayer@zbmed.de>", "Lukas Galke
+__author__ = "Eva Seidlmayer <seidlmayer@zbmed.de>, Lukas Galke"
 __copyright__ = "2023 by Eva Seidlmayer"
 __license__ = "ISC license"
 __email__ = "seidlmayer@zbmed.de"
