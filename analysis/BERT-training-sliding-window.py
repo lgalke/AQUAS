@@ -116,40 +116,32 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         AQUASwindowsvectors = []
         AQUASnumberwindows = 0
-        print(input_ids.size())
-        for item in input_ids:
-            print(item)
-            print(attention_mask, attention_mask.size())
-            if len(item) > 512:
-                windows = sliding_window(item)
-                for window in windows:
-                    window = window.unsqueeze(0)
-                    outputs = self.bert(
-                        window,
-                        attention_mask=attention_mask,
-                        token_type_ids=token_type_ids,
-                        position_ids=position_ids,
-                        head_mask=head_mask,
-                        inputs_embeds=inputs_embeds,
-                        output_attentions=output_attentions,
-                        output_hidden_states=output_hidden_states,
-                        return_dict=return_dict,
-                    )
-                    # get the vector
-                    pooled_output = outputs[1]
 
-                    AQUASwindowsvectors.append(pooled_output)
-                    AQUASnumberwindows += 1
-                # sum and mean
-                # AQUASpooled_output = [sum(i) for i in AQUASwindowsvectors] / AQUASnumberwindows
-                AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
+        # input_ids : [bsz, max_seqlen]
+        # attention_mask: [bsz, max_seqlen]
+        # 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0
 
-            else:
-                item = item.unsqueeze(0)
-                print('2222222222222', item.size())
+        batch_size = input_ids.size(0)
+
+        assert batch_size == 1, "Please use batch size = 1"
+
+        length = attention_mask.sum(1)
+
+        if length > 512:
+            print("Len > 512, sliding")
+            window_tokens = sliding_window(item)
+            window_attn_masks = sliding_window(attention_mask)
+
+            for tokens, attn_mask in zip(window_tokens, window_attn_masks):
+                tokens = tokens.unsqueeze(0)
+                attn_mask = attn_mask.unsqueeze(0)
+                print("\tTokens size", tokens.size())
+                print("\tattn_mask size", attn_mask.size())
+                print("\tposition_ids", position_ids)
+
                 outputs = self.bert(
-                    item,
-                    attention_mask=attention_mask,
+                    tokens,
+                    attention_mask=attn_mask,
                     token_type_ids=token_type_ids,
                     position_ids=position_ids,
                     head_mask=head_mask,
@@ -158,8 +150,35 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                     output_hidden_states=output_hidden_states,
                     return_dict=return_dict,
                 )
-                AQUASpooled_output = outputs[1]
+                # get the vector
+                pooled_output = outputs[1]
 
+                AQUASwindowsvectors.append(pooled_output)
+                AQUASnumberwindows += 1
+            # sum and mean
+            # AQUASpooled_output = [sum(i) for i in AQUASwindowsvectors] / AQUASnumberwindows
+            AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
+
+        else:
+            print("Len <= 512, no slides :(")
+            input_ids = input_ids.unsqueeze(0)
+            print("\tInput_ids size", input_ids.size())
+            print("\tattention_mask size", attention_mask.size())
+            print("\tposition_ids", position_ids)
+            outputs = self.bert(
+                input_ids,
+                attention_mask=attention_mask,
+                token_type_ids=token_type_ids,
+                position_ids=position_ids,
+                head_mask=head_mask,
+                inputs_embeds=inputs_embeds,
+                output_attentions=output_attentions,
+                output_hidden_states=output_hidden_states,
+                return_dict=return_dict,
+            )
+            AQUASpooled_output = outputs[1]
+
+        # AQUASpooled_output defined
         pooled_output = self.dropout(AQUASpooled_output)
         logits = self.classifier(pooled_output)
 
@@ -244,15 +263,15 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
         for batch_input, batch_mask in val_loader:
             outputs = model(input_ids=batch_input, attention_mask=val_masks)
             logits = outputs[1]
+            assert logits.size(1) == 3, "Something went terribly wrong"
             predicted_class = torch.argmax(logits, dim=1)
 
             predictions.append(predicted_class)
 
     predictions = torch.stack(predictions)
     # Sliding
-    output = model.predict([val_inputs, val_masks])
-
-    predicted_labels = output.logits.argmax(axis=1)
+    # output = model.predict([val_inputs, val_masks])
+    # predicted_labels = output.logits.argmax(axis=1)
 
     accuracy = (predictions == val_labels).mean()
 
@@ -299,7 +318,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     wandb.watch(model)
-    print('weight and biases is tracking')
+    print("weight and biases is tracking")
 
     # each loop is one epoch
     for epoch in range(epochs):
