@@ -53,7 +53,7 @@ def tokenize(texts):
 
     # Tokenize the text data
     tokens = tokenizer(
-        texts,max_length =max_length, padding="max_length", truncation=True
+        texts, max_length=max_length, padding="max_length", truncation=True
     )
     print("text is tokenized")
     return tokens
@@ -126,7 +126,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         assert batch_size == 1, "Please use batch size = 1"
 
         length = attention_mask.sum(1)
-        print('length before sliding window', length)
+        print("length before sliding window", length)
 
         if length > 512:
             print("Len > 512, sliding")
@@ -164,8 +164,22 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         else:
             print("Len <= 512, no slides :(")
-            input_ids = input_ids.squeeze(0)
-            attention_mask = attention_mask.squeeze(0)
+            # They should already be in shape [1,maxlen],
+            # no need to squeeze
+            # input_ids = input_ids.squeeze(0)
+            # attention_mask = attention_mask.squeeze(0)
+            # Let's confirm!
+            assert input_ids.dim() == 2, "input_ids should be 2-dimensional: [bsz,seq]"
+            assert (
+                attention_mask.dim() == 2
+            ), "attention_mask should be 2-dimensional: [bsz,seq]"
+
+            # Trim to 512 tokens.
+            # because BERT can only process 512, and original maxlen was 2048.
+            # We know they are shorter than 512 anyways, so nothing is lost.
+            input_ids = input_ids[:, :512]
+            attention_mask = attention_mask[:, :512]
+
             print("\tInput_ids size", input_ids.size())
             print("\tattention_mask size", attention_mask.size())
             print("\tposition_ids", position_ids)
