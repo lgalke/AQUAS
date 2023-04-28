@@ -53,7 +53,7 @@ def tokenize(texts):
 
     # Tokenize the text data
     tokens = tokenizer(
-        texts, max_length=max_length, padding="max_length", truncation=True
+        texts,max_length =max_length, padding="max_length", truncation=True
     )
     print("text is tokenized")
     return tokens
