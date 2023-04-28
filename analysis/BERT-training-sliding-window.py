@@ -126,7 +126,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         assert batch_size == 1, "Please use batch size = 1"
 
         length = attention_mask.sum(1)
-        print('length', length)
+        print('length before sliding window', length)
 
         if length > 512:
             print("Len > 512, sliding")
@@ -164,7 +164,8 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         else:
             print("Len <= 512, no slides :(")
-            #input_ids = input_ids.unsqueeze(0)
+            input_ids = input_ids.unsqueeze(0)
+            attention_mask = attention_mask.unsqueeze(0)
             print("\tInput_ids size", input_ids.size())
             print("\tattention_mask size", attention_mask.size())
             print("\tposition_ids", position_ids)
