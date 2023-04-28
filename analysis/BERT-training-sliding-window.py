@@ -129,8 +129,10 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         if length > 512:
             print("Len > 512, sliding")
-            window_tokens = sliding_window(input_ids)
-            window_attn_masks = sliding_window(attention_mask)
+            print(input_ids.size())
+
+            window_tokens = sliding_window(input_ids.squeeze(0))
+            window_attn_masks = sliding_window(attention_mask.squeeze(0))
 
             for tokens, attn_mask in zip(window_tokens, window_attn_masks):
                 tokens = tokens.unsqueeze(0)
