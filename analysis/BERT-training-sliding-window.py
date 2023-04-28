@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __description__ = "train datatset with BERT using sliding windows approach"
-__author__ = "Eva Seidlmayer <seidlmayer@zbmed.de>"
+__author__ = "Eva Seidlmayer <seidlmayer@zbmed.de>", "Lukas Galke
 __copyright__ = "2023 by Eva Seidlmayer"
 __license__ = "ISC license"
 __email__ = "seidlmayer@zbmed.de"
@@ -126,6 +126,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         assert batch_size == 1, "Please use batch size = 1"
 
         length = attention_mask.sum(1)
+        print('length', length)
 
         if length > 512:
             print("Len > 512, sliding")
