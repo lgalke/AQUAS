@@ -163,7 +163,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         else:
             print("Len <= 512, no slides :(")
-            input_ids = input_ids.unsqueeze(0)
+            #input_ids = input_ids.unsqueeze(0)
             print("\tInput_ids size", input_ids.size())
             print("\tattention_mask size", attention_mask.size())
             print("\tposition_ids", position_ids)
