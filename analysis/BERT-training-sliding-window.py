@@ -49,12 +49,10 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    #max_length = 100000
+    # max_length = 100000
 
     # Tokenize the text data
-    tokens = tokenizer(
-        texts, padding="max_length", truncation=True
-    )
+    tokens = tokenizer(texts, padding="max_length", truncation=True)
     print("text is tokenized")
     return tokens
 
@@ -143,7 +141,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
             else:
                 item = item.unsqueeze(0)
-                print('2222222222222', item.size())
+                print("2222222222222", item.size())
                 outputs = self.bert(
                     item,
                     attention_mask=attention_mask,
@@ -241,15 +239,15 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
         for batch_input, batch_mask in val_loader:
             outputs = model(input_ids=batch_input, attention_mask=val_masks)
             logits = outputs[1]
+            assert logits.size(1) == 3, "Something went terribly wrong"
             predicted_class = torch.argmax(logits, dim=1)
 
             predictions.append(predicted_class)
 
     predictions = torch.stack(predictions)
     # Sliding
-    output = model.predict([val_inputs, val_masks])
-
-    predicted_labels = output.logits.argmax(axis=1)
+    # output = model.predict([val_inputs, val_masks])
+    # predicted_labels = output.logits.argmax(axis=1)
 
     accuracy = (predictions == val_labels).mean()
 
@@ -296,7 +294,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     wandb.watch(model)
-    print('weight and biases is tracking')
+    print("weight and biases is tracking")
 
     # each loop is one epoch
     for epoch in range(epochs):
