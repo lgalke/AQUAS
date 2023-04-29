@@ -172,7 +172,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             print('AAATTTEENNNTTTTIIIOONN MASK', type(attention_mask))
             assert input_ids.dim() == 2, "input_ids should be 2-dimensional: [bsz,seq]"
             assert (
-                attention_mask.dim() == 2
+                attention_mask.ndim() == 2
             ), "attention_mask should be 2-dimensional: [bsz,seq]"
 
             # Trim to 512 tokens.
