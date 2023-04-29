@@ -169,10 +169,14 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             # input_ids = input_ids.squeeze(0)
             # attention_mask = attention_mask.squeeze(0)
             # Let's confirm!
-            print('AAATTTEENNNTTTTIIIOONN MASK', type(attention_mask))
+            input_ids = torch.tensor(input_ids)
+            attention_mask = torch.tensor(attention_mask)
+            print('TYPE CHECK', '\n input_ids:', type(input_ids), 'attention_mask:', type(attention_mask), 'position_ids:', type(position_ids), 'head_mask:', type(head_mask),
+                  'inputs_embeds:', type(inputs_embeds), 'output_attentions:', type(output_attentions), 'output hidden_states:', type(output_hidden_states), 'return_dict:', type(return_dict) )
+
             assert input_ids.dim() == 2, "input_ids should be 2-dimensional: [bsz,seq]"
             assert (
-                attention_mask.ndim() == 2
+                attention_mask.dim() == 2
             ), "attention_mask should be 2-dimensional: [bsz,seq]"
 
             # Trim to 512 tokens.
