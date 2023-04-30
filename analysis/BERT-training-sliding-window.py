@@ -269,7 +269,7 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
         optimizer.step()
 
     # model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-    print("model trained")
+    print("epoch trained")
     return model
 
 
@@ -283,6 +283,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     predictions = []
     with torch.no_grad():
+
         model.eval()
         for batch_input, batch_mask in val_loader:
             outputs = model(input_ids=batch_input, attention_mask=val_masks)
