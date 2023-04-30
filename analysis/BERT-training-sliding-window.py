@@ -128,7 +128,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         length = attention_mask.sum(1)
         print("length before sliding window", length)
 
-        if length > 512:
+        if length.item() > 512:
             print("Len > 512, sliding")
             print(input_ids.size())
 
