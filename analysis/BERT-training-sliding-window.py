@@ -302,7 +302,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
         model.eval()
         for batch_input, batch_mask in val_loader:
-            outputs = model(input_ids=batch_input, attention_mask=val_masks)
+            outputs = model(input_ids=batch_input, attention_mask=batch_mask)
             logits = outputs[1]
             assert logits.size(1) == 3, "Something went terribly wrong"
             predicted_class = torch.argmax(logits, dim=1)
