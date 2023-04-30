@@ -62,9 +62,7 @@ def tokenize(texts):
 def convert_labels(labels):
     # Convert labels to numerical values
     label_map = {"1": 0, "2": 1, "3": 2}
-    labels = [label_map[label] for label in labels]
-    labels_conv = torch.tensor(labels)
-
+    labels_conv = [label_map[label] for label in labels]
     print("labels converted")
     return labels_conv
 
@@ -156,7 +154,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 )
                 # get the vector
                 pooled_output = outputs[1]
-                #print(outputs)
+                # print(outputs)
                 AQUASwindowsvectors.append(pooled_output)
                 AQUASnumberwindows += 1
             # sum and mean
@@ -170,10 +168,25 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             # input_ids = input_ids.squeeze(0)
             # attention_mask = attention_mask.squeeze(0)
             # Let's confirm!
-            input_ids = torch.tensor(input_ids)
-            attention_mask = torch.tensor(attention_mask)
-            print('TYPE CHECK', '\n input_ids:', type(input_ids), 'attention_mask:', type(attention_mask), 'position_ids:', type(position_ids), 'head_mask:', type(head_mask),
-                  'inputs_embeds:', type(inputs_embeds), 'output_attentions:', type(output_attentions), 'output hidden_states:', type(output_hidden_states), 'return_dict:', type(return_dict) )
+            print(
+                "TYPE CHECK",
+                "\n input_ids:",
+                type(input_ids),
+                "attention_mask:",
+                type(attention_mask),
+                "position_ids:",
+                type(position_ids),
+                "head_mask:",
+                type(head_mask),
+                "inputs_embeds:",
+                type(inputs_embeds),
+                "output_attentions:",
+                type(output_attentions),
+                "output hidden_states:",
+                type(output_hidden_states),
+                "return_dict:",
+                type(return_dict),
+            )
 
             assert input_ids.dim() == 2, "input_ids should be 2-dimensional: [bsz,seq]"
             assert (
@@ -274,6 +287,9 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
 
 
 def evaluate_model(model, val_inputs, val_masks, val_labels):
+    assert val_inputs.dim() == 2, "val_inputs should be 2-dimensional"
+    assert val_masks.dim() == 2, "val_masks should be 1-dimensional"
+    assert val_labels.dim() == 1, "val_labels should be 1-dimensional"
     # Evaluate  model
     val_loader = torch.utils.data.DataLoader(
         list(zip(val_inputs, val_masks)),
@@ -291,14 +307,14 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             assert logits.size(1) == 3, "Something went terribly wrong"
             predicted_class = torch.argmax(logits, dim=1)
 
-            predictions.append(predicted_class)
+            predictions.append(predicted_class.item())
 
-    predictions = torch.stack(predictions)
+    predictions = torch.tensor(predictions)
     # Sliding
     # output = model.predict([val_inputs, val_masks])
     # predicted_labels = output.logits.argmax(axis=1)
 
-    accuracy = (predictions == val_labels).mean()
+    accuracy = (predictions == val_labels).float().mean().item()
 
     f1 = f1_score(val_labels, predictions, average="weighted")
 
@@ -335,6 +351,13 @@ def main():
         train_labels,
         val_labels,
     ) = split_train_val_data(tokens, split_ratio, labels_conv)
+
+    train_inputs = torch.tensor(train_inputs)
+    val_inputs = torch.tensor(val_inputs)
+    train_masks = torch.tensor(train_masks)
+    val_masks = torch.tensor(val_masks)
+    train_labels = torch.tensor(train_labels)
+    val_labels = torch.tensor(val_labels)
 
     # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained(
