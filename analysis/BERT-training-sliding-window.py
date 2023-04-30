@@ -127,8 +127,9 @@ class AQUASSlidingBERT(BertForSequenceClassification):
 
         length = attention_mask.sum(1)
         print("length before sliding window", length)
-
-        if length.item() > 512:
+        length = int(length.item())
+        print(length)
+        if length > 512:
             print("Len > 512, sliding")
             print(input_ids.size())
 
@@ -155,7 +156,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 )
                 # get the vector
                 pooled_output = outputs[1]
-                print(outputs)
+                #print(outputs)
                 AQUASwindowsvectors.append(pooled_output)
                 AQUASnumberwindows += 1
             # sum and mean
