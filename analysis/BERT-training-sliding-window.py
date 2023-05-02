@@ -19,7 +19,6 @@ from transformers import (
 )
 import numpy as np
 import argparse
-import os
 from sklearn.metrics import f1_score
 import torch
 import torch.nn as nn
@@ -49,7 +48,7 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 2048
+    max_length = 100000
 
     # Tokenize the text data
     tokens = tokenizer(
