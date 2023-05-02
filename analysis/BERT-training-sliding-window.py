@@ -48,7 +48,7 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 100000
+    max_length = 10000
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -138,7 +138,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 attn_mask = attn_mask.unsqueeze(0)
                 print("\tTokens size", tokens.size())
                 print("\tattn_mask size", attn_mask.size())
-                print("\tposition_ids", position_ids)
+                #print("\tposition_ids", position_ids)
 
                 outputs = self.bert(
                     tokens,
