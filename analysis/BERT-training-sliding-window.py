@@ -8,8 +8,8 @@ __license__ = "ISC license"
 __email__ = "seidlmayer@zbmed.de"
 __version__ = "1 "
 
-# BERT_MODEL_IDENTIFIER = "bert-base-uncased"
-BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
+BERT_MODEL_IDENTIFIER = "bert-base-uncased"
+#BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
 
 import pandas as pd
 from transformers import (
@@ -48,7 +48,8 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 10000
+    #max_length = 10000
+    max_length = 2048
 
     # Tokenize the text data
     tokens = tokenizer(
