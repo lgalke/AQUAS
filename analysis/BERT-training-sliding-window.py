@@ -137,8 +137,8 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             for tokens, attn_mask in zip(window_tokens, window_attn_masks):
                 tokens = tokens.unsqueeze(0)
                 attn_mask = attn_mask.unsqueeze(0)
-                print("\tTokens size", tokens.size())
-                print("\tattn_mask size", attn_mask.size())
+                #print("\tTokens size", tokens.size())
+                #print("\tattn_mask size", attn_mask.size())
                 #print("\tposition_ids", position_ids)
 
                 outputs = self.bert(
