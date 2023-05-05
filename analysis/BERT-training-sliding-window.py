@@ -48,7 +48,7 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    #max_length = 10000
+    max_length = 10000
     max_length = 2048
 
     # Tokenize the text data
