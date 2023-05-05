@@ -49,7 +49,7 @@ def tokenize(texts):
 
     # set max_length
     max_length = 10000
-    max_length = 2048
+    #max_length = 2048
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -126,7 +126,6 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         length = attention_mask.sum(1)
         print("length before sliding window", length)
         length = int(length.item())
-        print(length)
         if length > 512:
             print("Len > 512, sliding")
             print(input_ids.size())
