@@ -8,8 +8,8 @@ __license__ = "ISC license"
 __email__ = "seidlmayer@zbmed.de"
 __version__ = "1 "
 
-BERT_MODEL_IDENTIFIER = "bert-base-uncased"
-#BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
+#BERT_MODEL_IDENTIFIER = "bert-base-uncased"
+BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
 
 import pandas as pd
 from transformers import (
@@ -370,6 +370,7 @@ def main():
 
     # each loop is one epoch
     for epoch in range(epochs):
+        print("start new epoch")
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
         acc, f1 = evaluate_model(model, val_inputs, val_masks, val_labels)
 
