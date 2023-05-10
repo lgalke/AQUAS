@@ -8,8 +8,8 @@ __license__ = "ISC license"
 __email__ = "seidlmayer@zbmed.de"
 __version__ = "1 "
 
-#BERT_MODEL_IDENTIFIER = "bert-base-uncased"
-BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
+BERT_MODEL_IDENTIFIER = "bert-base-uncased"
+#BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
 
 import pandas as pd
 from transformers import (
