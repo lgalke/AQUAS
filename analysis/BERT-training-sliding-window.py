@@ -327,7 +327,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 5e-5
-    epochs = 15
+    epochs = 5
 
     wandb.init(
         # Set the project where this run will be logged
