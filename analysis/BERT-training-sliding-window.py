@@ -48,8 +48,8 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 10000
-    #max_length = 2048
+    #max_length = 10000
+    max_length = 2048
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -327,7 +327,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 5e-5
-    epochs = 5
+    epochs = 3
 
     wandb.init(
         # Set the project where this run will be logged
@@ -378,6 +378,7 @@ def main():
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}")
 
+    model.save('../models/bert-base_t2048_e3')
 
 if __name__ == "__main__":
     main()
