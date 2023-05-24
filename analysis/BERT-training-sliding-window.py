@@ -364,7 +364,6 @@ def main():
         BERT_MODEL_IDENTIFIER, num_labels=3
     )  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    print("model type", type(model))
     wandb.watch(model)
     print("weight and biases is tracking")
 
@@ -378,7 +377,7 @@ def main():
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}")
 
-    model.save('../models/bert-base_t2048_e3')
+    torch.save(model, '../models/bert-base_t2048_e1')
 
 if __name__ == "__main__":
     main()
