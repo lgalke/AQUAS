@@ -34,7 +34,7 @@ except ImportError:
 
 def load_dataset(input_file_csv):
     # Load dataset
-    df = pd.read_csv(input_file_csv, sep=",")
+    df = pd.read_csv(input_file_csv, sep=",", nrows=700)
     df = df.sample(frac=1)
     df = df.astype(str)
     texts = df["text"].to_list()
@@ -364,7 +364,7 @@ def main():
         BERT_MODEL_IDENTIFIER, num_labels=3
     )  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
+    print("model type", type(model))
     wandb.watch(model)
     print("weight and biases is tracking")
 
