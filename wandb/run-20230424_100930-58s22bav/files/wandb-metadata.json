@@ -1,0 +1,79 @@
+{
+    "os": "Linux-5.4.0-146-generic-x86_64-with-glibc2.29",
+    "python": "3.8.10",
+    "heartbeatAt": "2023-04-24T08:09:31.899553",
+    "startedAt": "2023-04-24T08:09:30.252038",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "data/ready_dataset.csv"
+    ],
+    "state": "running",
+    "program": "analysis/BERT-training-sliding-window.py",
+    "codePath": "analysis/BERT-training-sliding-window.py",
+    "git": {
+        "remote": "git@github.com:EvaSeidlmayer/AQUAS.git",
+        "commit": "fecb53586fa0e6661d1039ffa24c4cc7ebd9cda5"
+    },
+    "email": "seidlamyer@zbmed.de",
+    "root": "/home/ruth/ProgrammingProjects/AQUS/AQUAS",
+    "host": "ruth-ThinkPad-X1-Carbon-6th",
+    "username": "ruth",
+    "executable": "/home/ruth/.virtualenvs/AQUS/bin/python3",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 826.222125,
+        "min": 400.0,
+        "max": 4000.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 827.729,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 814.029,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 801.123,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 800.054,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 800.012,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 800.054,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 800.028,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 800.032,
+            "min": 400.0,
+            "max": 4000.0
+        }
+    ],
+    "disk": {
+        "total": 915.3232879638672,
+        "used": 651.6976013183594
+    },
+    "memory": {
+        "total": 15.531074523925781
+    }
+}

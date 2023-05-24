@@ -16,10 +16,6 @@ import argparse
 import os
 from sklearn.metrics import f1_score
 
-#os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" #If the line below doesn't work, uncomment this line (make sure to comment the line below); it should help.
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-#Your Code Here
-
 
 def load_dataset(input_file_csv):
     # Load dataset
@@ -30,6 +26,7 @@ def load_dataset(input_file_csv):
     labels = df['category-id'].to_list()
     print('data input lists created')
     return texts, labels
+
 
 def tokenize(texts):
     # Load the tokenizer

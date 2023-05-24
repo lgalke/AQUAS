@@ -1,0 +1,79 @@
+{
+    "os": "Linux-5.4.0-147-generic-x86_64-with-glibc2.29",
+    "python": "3.8.10",
+    "heartbeatAt": "2023-04-30T11:24:08.655818",
+    "startedAt": "2023-04-30T11:24:07.283762",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "data/ready_dataset.csv"
+    ],
+    "state": "running",
+    "program": "analysis/BERT-training-sliding-window.py",
+    "codePath": "analysis/BERT-training-sliding-window.py",
+    "git": {
+        "remote": "git@github.com:EvaSeidlmayer/AQUAS.git",
+        "commit": "2e00c4db6256c2d2e8cfba014d6a2f0d1fb59806"
+    },
+    "email": "seidlamyer@zbmed.de",
+    "root": "/home/ruth/ProgrammingProjects/AQUS/AQUAS",
+    "host": "ruth-ThinkPad-X1-Carbon-6th",
+    "username": "ruth",
+    "executable": "/home/ruth/.virtualenvs/AQUS/bin/python3",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 875.3075000000001,
+        "min": 400.0,
+        "max": 4000.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 931.868,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 833.876,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 897.05,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 861.561,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1038.102,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1095.088,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1379.81,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1329.453,
+            "min": 400.0,
+            "max": 4000.0
+        }
+    ],
+    "disk": {
+        "total": 915.3232879638672,
+        "used": 652.5651435852051
+    },
+    "memory": {
+        "total": 15.531070709228516
+    }
+}
