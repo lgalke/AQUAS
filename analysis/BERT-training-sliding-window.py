@@ -326,8 +326,8 @@ def main():
     parser.add_argument("input_file_csv")
     args = parser.parse_args()
 
-    learning_rate = 5e-5
-    epochs = 3
+    learning_rate = 3e-5
+    epochs = 1
 
     wandb.init(
         # Set the project where this run will be logged
