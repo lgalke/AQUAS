@@ -34,7 +34,7 @@ except ImportError:
 
 def load_dataset(input_file_csv):
     # Load dataset
-    df = pd.read_csv(input_file_csv, sep=",", nrows=700)
+    df = pd.read_csv(input_file_csv, sep=",")
     df = df.sample(frac=1)
     df = df.astype(str)
     texts = df["text"].to_list()
@@ -48,8 +48,8 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    #max_length = 10000
-    max_length = 2048
+    max_length = 10000
+    #max_length = 2048
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -327,7 +327,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 3e-5
-    epochs = 1
+    epochs = 3
 
     wandb.init(
         # Set the project where this run will be logged
@@ -377,7 +377,7 @@ def main():
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}")
 
-    torch.save(model, 'models/bert-base_t2048_e1')
+    torch.save(model, 'models/bert-base_t10k_e3_lr3e-5')
 
 if __name__ == "__main__":
     main()
