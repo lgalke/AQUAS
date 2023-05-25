@@ -377,7 +377,7 @@ def main():
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}")
 
-    torch.save(model, '../models/bert-base_t2048_e1')
+    torch.save(model, '/models/bert-base_t2048_e1')
 
 if __name__ == "__main__":
     main()
