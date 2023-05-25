@@ -20,6 +20,7 @@ from transformers import (
 import numpy as np
 import argparse
 from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report
 import torch
 import torch.nn as nn
 from typing import Optional, Union, Tuple
@@ -317,8 +318,9 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     accuracy = (predictions == val_labels).float().mean().item()
 
     f1 = f1_score(val_labels, predictions, average="weighted")
-
-    return accuracy, f1
+    target_class = ['class 0', 'class 1', 'class 2']
+    class_rep = classification_report(val_labels, predictions, target_names=target_class)
+    return accuracy, f1, class_rep
 
 
 def main():
@@ -336,6 +338,7 @@ def main():
         config={
             "learning_rate": learning_rate,
             "epochs": epochs,
+
         },
     )
 
@@ -371,11 +374,11 @@ def main():
     for epoch in range(epochs):
         print("start new epoch")
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
-        acc, f1 = evaluate_model(model, val_inputs, val_masks, val_labels)
+        acc, f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
-        wandb.log({"accuracy": acc, "f1": f1})
+        wandb.log({"accuracy": acc, "f1": f1, classification_report : class_rep})
 
-        print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}")
+        print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep:.4f]}")
 
     torch.save(model, 'models/bert-base_t10k_e3_lr3e-5')
 
