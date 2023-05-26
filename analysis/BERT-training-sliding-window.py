@@ -49,9 +49,9 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    #max_length = 10000
+    max_length = 10000
     #max_length = 2048
-    max_length = 50
+
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -332,7 +332,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 3e-5
-    epochs = 1
+    epochs = 4
 
     wandb.init(
         # Set the project where this run will be logged
@@ -385,7 +385,7 @@ def main():
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep:.4f}")
 
-    torch.save(model, 'models/bert-base_t10k_e3_lr3e-5')
+    torch.save(model, 'models/bert-base_t10k_e4_lr3e-5')
 
 if __name__ == "__main__":
     main()
