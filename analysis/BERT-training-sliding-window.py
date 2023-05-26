@@ -378,7 +378,7 @@ def main():
         print("start new epoch")
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
         acc, f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
-
+        class_rep = str(class_rep)
         wandb.log({"accuracy": acc, "f1": f1, classification_report : class_rep})
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep:.4f]}")
