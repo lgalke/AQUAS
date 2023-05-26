@@ -49,8 +49,9 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 10000
+    #max_length = 10000
     #max_length = 2048
+    max_length = 50
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -313,14 +314,13 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     predictions = torch.tensor(predictions)
 
     print('predictions:', predictions)
-    print('validationlabels:', val_labels)
-    # Sliding
-    # output = model.predict([val_inputs, val_masks])
-    # predicted_labels = output.logits.argmax(axis=1)
-
+    # calculate accuracy
     accuracy = (predictions == val_labels).float().mean().item()
 
+    #calculate f1 score
     f1 = f1_score(val_labels, predictions, average="weighted")
+
+    #calculate accuracy per class
     target_class = ['class 0', 'class 1', 'class 2']
     class_rep = classification_report(val_labels, predictions, target_names=target_class)
     return accuracy, f1, class_rep
