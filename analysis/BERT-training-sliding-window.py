@@ -311,6 +311,9 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             predictions.append(predicted_class.item())
 
     predictions = torch.tensor(predictions)
+
+    print('predictions:', predictions)
+    print('validationlabels:', val_labels)
     # Sliding
     # output = model.predict([val_inputs, val_masks])
     # predicted_labels = output.logits.argmax(axis=1)
@@ -329,7 +332,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 3e-5
-    epochs = 3
+    epochs = 1
 
     wandb.init(
         # Set the project where this run will be logged
