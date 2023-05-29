@@ -13,7 +13,7 @@ import tensorflow as tf
 import numpy as np
 
 # Load the trained model
-model = tf.keras.models.load_model('models/bert-base_t10k_e4_lr3e-5')
+model = tf.keras.models.load_model('../models/bert-base_t10k_e4_lr3e-5')
 
 # Preprocess the specific text
 text = "Your specific text here"
