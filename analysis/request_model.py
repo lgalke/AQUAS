@@ -9,11 +9,19 @@ __email__ = "seidlmayer@zbmed.de"
 __version__ = "1 "
 
 
-import tensorflow as tf
+
 import numpy as np
+import argparse
+import AQUASSlidingBERT from BERT-training-sliding-window.py
+
+argparser = argparse.ArgumentParser()
+argparser.add_argument("model")
+args = argparser.parse_args()
+
 
 # Load the trained model
-model = tf.keras.models.load_model('models/bert-base_t10k_e3_lr3e-5.p')
+model = AQUASSlidingBERT.from_pretrained(args.model)
+#model = tf.keras.models.load_model(args.model)
 
 # Preprocess the specific text
 text = "Your specific text here"
