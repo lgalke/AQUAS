@@ -321,7 +321,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     f1 = f1_score(val_labels, predictions, average="weighted")
 
     #calculate accuracy per class
-    target_class = ['class 0', 'class 1', 'class 2']
+    target_class = ['class scientific', 'class popular science', 'class disinformation']
     class_rep = classification_report(val_labels, predictions, target_names=target_class)
     return accuracy, f1, class_rep
 
@@ -385,7 +385,7 @@ def main():
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep:.4f}")
 
-    torch.save(model, 'models/bert-base_t10k_e4_lr3e-5')
+    torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
 
 if __name__ == "__main__":
     main()
