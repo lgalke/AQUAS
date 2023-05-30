@@ -129,8 +129,8 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         print("length before sliding window", length)
         length = int(length.item())
         if length > 512:
-            print("Len > 512, sliding")
-            print(input_ids.size())
+            #print("Len > 512, sliding")
+            #print(input_ids.size())
 
             window_tokens = sliding_window(input_ids.squeeze(0))
             window_attn_masks = sliding_window(attention_mask.squeeze(0))
@@ -163,31 +163,31 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
 
         else:
-            print("Len <= 512, no slides :(")
+            #print("Len <= 512, no slides :(")
             # They should already be in shape [1,maxlen],
             # no need to squeeze
             # input_ids = input_ids.squeeze(0)
             # attention_mask = attention_mask.squeeze(0)
             # Let's confirm!
-            print(
-                "TYPE CHECK",
-                "\n input_ids:",
-                type(input_ids),
-                "attention_mask:",
-                type(attention_mask),
-                "position_ids:",
-                type(position_ids),
-                "head_mask:",
-                type(head_mask),
-                "inputs_embeds:",
-                type(inputs_embeds),
-                "output_attentions:",
-                type(output_attentions),
-                "output hidden_states:",
-                type(output_hidden_states),
-                "return_dict:",
-                type(return_dict),
-            )
+            #print(
+             #   "TYPE CHECK",
+              #  "\n input_ids:",
+               # type(input_ids),
+                #"attention_mask:",
+                #type(attention_mask),
+            #    "position_ids:",
+             #   type(position_ids),
+              #  "head_mask:",
+               # type(head_mask),
+                #"inputs_embeds:",
+            #    type(inputs_embeds),
+             #   "output_attentions:",
+              #  type(output_attentions),
+               # "output hidden_states:",
+            #    type(output_hidden_states),
+             #   "return_dict:",
+              #  type(return_dict),
+            #)
 
             assert input_ids.dim() == 2, "input_ids should be 2-dimensional: [bsz,seq]"
             assert (
@@ -200,9 +200,9 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             input_ids = input_ids[:, :512]
             attention_mask = attention_mask[:, :512]
 
-            print("\tInput_ids size", input_ids.size())
-            print("\tattention_mask size", attention_mask.size())
-            print("\tposition_ids", position_ids)
+            #print("\tInput_ids size", input_ids.size())
+            #print("\tattention_mask size", attention_mask.size())
+            #print("\tposition_ids", position_ids)
             outputs = self.bert(
                 input_ids,
                 attention_mask=attention_mask,
@@ -313,7 +313,6 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     predictions = torch.tensor(predictions)
 
-    print('predictions:', predictions)
     # calculate accuracy
     accuracy = (predictions == val_labels).float().mean().item()
 
@@ -332,7 +331,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 3e-5
-    epochs = 4
+    epochs = 3
 
     wandb.init(
         # Set the project where this run will be logged
@@ -380,13 +379,12 @@ def main():
         acc, f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
-        print('classrep type', type(class_rep))
         wandb.log({"accuracy": acc, "f1": f1, "classification_report" : class_rep})
 
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep:.4f}")
 
     #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
-    model.save_pretrained('models/bert-base_t10k_e4_lr3e-5.p')
+    model.save_pretrained('models/bert-base_t10k_e3_lr3e-5')
 
 if __name__ == "__main__":
     main()
