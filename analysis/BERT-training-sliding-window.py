@@ -126,7 +126,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         assert batch_size == 1, "Please use batch size = 1"
 
         length = attention_mask.sum(1)
-        print("length before sliding window", length)
+        #print("length before sliding window", length)
         length = int(length.item())
         if length > 512:
             #print("Len > 512, sliding")
