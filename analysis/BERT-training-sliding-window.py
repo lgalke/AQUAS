@@ -381,7 +381,7 @@ def main():
         class_rep = str(class_rep)
         wandb.log({"accuracy": acc, "f1": f1, "classification_report" : class_rep})
 
-        print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep:.4}")
+        print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep}")
 
     #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
     model.save_pretrained('models/bert-base_t10k_e3_lr3e-5')
