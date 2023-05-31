@@ -15,7 +15,7 @@ import pandas as pd
 from transformers import (
     BertTokenizer,
     BertForSequenceClassification,
-    BertForPreTraining,
+    BertForPreTraining,AutoConfig
 )
 import numpy as np
 import argparse
@@ -239,6 +239,7 @@ class AQUASSlidingBERT(BertForSequenceClassification):
                 else:
                     loss = loss_fct(logits, labels)
             elif self.config.problem_type == "single_label_classification":
+                # softmax crossentropie: CrossEntropyLoss()
                 loss_fct = nn.CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             elif self.config.problem_type == "multi_label_classification":
@@ -331,7 +332,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 3e-5
-    epochs = 5
+    epochs = 3
 
     wandb.init(
         # Set the project where this run will be logged
@@ -364,9 +365,14 @@ def main():
     train_labels = torch.tensor(train_labels)
     val_labels = torch.tensor(val_labels)
 
+    config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
+    config['problem_type'] = "multi_label_classification"
+    print("config", config)
+
+
     # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained(
-        BERT_MODEL_IDENTIFIER, num_labels=3
+        BERT_MODEL_IDENTIFIER, num_labels=3, config= config
     )  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     wandb.watch(model)
@@ -384,7 +390,7 @@ def main():
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep}")
 
     #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
-    model.save_pretrained('models/bert-base_t10k_e5_lr3e-5')
+    model.save_pretrained('models/bert-base_t10k_e3_lr3e-5_mlclass')
     print('done')
 
 if __name__ == "__main__":
