@@ -365,16 +365,17 @@ def main():
     train_labels = torch.tensor(train_labels)
     val_labels = torch.tensor(val_labels)
 
-    config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
-    config.update({'problem_type': "multi_label_classification"})
+    #config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
+    #config.update({'problem_type': "multi_label_classification"})
     #config['num_labels'] = 3
-    print("config", config)
+    #print("config", config)
 
 
     # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained(
         BERT_MODEL_IDENTIFIER,
-        labels = 3,
+        num_labels = 3,
+        problem_type = "multi_label_classification",
         config= config
     )  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
