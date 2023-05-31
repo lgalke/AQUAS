@@ -367,12 +367,13 @@ def main():
 
     config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
     config['problem_type'] = "multi_label_classification"
+    config['num_labels'] = 3
     print("config", config)
 
 
     # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained(
-        BERT_MODEL_IDENTIFIER, num_labels=3, config= config
+        BERT_MODEL_IDENTIFIER, config= config
     )  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     wandb.watch(model)
