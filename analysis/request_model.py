@@ -12,7 +12,7 @@ __version__ = "1 "
 
 import numpy as np
 import argparse
-from BERT-training-sliding-window import AQUASSlidingBERT
+from BERT_training_sliding_window import AQUASSlidingBERT
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("model")
