@@ -366,6 +366,7 @@ def main():
     val_labels = torch.tensor(val_labels)
 
     config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
+    print(config)
     config['problem_type'] = "multi_label_classification"
     config['num_labels'] = 3
     print("config", config)
