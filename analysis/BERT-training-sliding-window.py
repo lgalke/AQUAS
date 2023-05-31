@@ -331,7 +331,7 @@ def main():
     args = parser.parse_args()
 
     learning_rate = 3e-5
-    epochs = 4
+    epochs = 5
 
     wandb.init(
         # Set the project where this run will be logged
@@ -384,7 +384,7 @@ def main():
         print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep}")
 
     #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
-    model.save_pretrained('models/bert-base_t10k_e4_lr3e-5')
+    model.save_pretrained('models/bert-base_t10k_e5_lr3e-5')
     print('done')
 
 if __name__ == "__main__":
