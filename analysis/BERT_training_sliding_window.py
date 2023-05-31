@@ -375,9 +375,9 @@ def main():
     model = AQUASSlidingBERT.from_pretrained(
         BERT_MODEL_IDENTIFIER,
         num_labels = 3,
-        problem_type = "multi_label_classification",
-        config= config
-    )  # BioBERT statt bert-base-uncased
+        problem_type = "multi_label_classification",)
+        #config= config
+      # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     wandb.watch(model)
     print("weight and biases is tracking")
