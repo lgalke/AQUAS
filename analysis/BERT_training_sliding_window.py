@@ -374,7 +374,7 @@ def main():
     # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained(
         BERT_MODEL_IDENTIFIER,
-        num_labels = 3,
+        num_labels = 3, dim = 1,
         config= config
     )  # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
