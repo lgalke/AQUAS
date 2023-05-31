@@ -367,7 +367,7 @@ def main():
 
     config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
     config.update({'problem_type': "multi_label_classification"})
-    config['num_labels'] = 3
+    #config['num_labels'] = 3
     print("config", config)
 
 
