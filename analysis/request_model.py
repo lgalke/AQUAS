@@ -49,7 +49,7 @@ print("text is preprocessed")
 
 
 output = model(input_ids=input_ids, attention_mask= attn_mask)
-
-print(output)
-
+soft_output = torch.softmax(output)
+print('without softmax', output)
+print('with softmax', soft_output)
 
