@@ -40,13 +40,17 @@ text = "Your specific text here"
 #preprocess text
 tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 tokens = tokenizer(text, max_length=max_length, padding="max_length", truncation=True)
-print(tokens)
+#print(tokens)
 
-tokens = torch.tensor(tokens['input_ids'])
-input_tensor = tokens.unsqueeze(0)
+#tokens = torch.tensor(tokens['input_ids'])
+#input_tensor = tokens.unsqueeze(0)
+
+
+
 print("text is preprocessed")
 
-output = model(input_tensor)
+
+output = model(**tokens)
 
 print(output)
 
