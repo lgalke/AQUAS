@@ -42,7 +42,7 @@ tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 tokens = tokenizer(text, max_length=max_length, padding="max_length", truncation=True)
 print(tokens)
 
-tokens = torch.tensor(tokens)
+tokens = torch.tensor(tokens['input_ids'])
 input_tensor = tokens.unsqueeze(0)
 print("text is preprocessed")
 
