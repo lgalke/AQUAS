@@ -12,7 +12,19 @@ __version__ = "1 "
 
 import numpy as np
 import argparse
+import torch
 from BERT_training_sliding_window import AQUASSlidingBERT
+import torch.nn as nn
+import torch.optim as optim
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+from transformers import BertTokenizer
+
+
+BERT_MODEL_IDENTIFIER = "bert-base-uncased"
+#BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
+max_length = 10000
+#max_length = 15000
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("model")
@@ -21,17 +33,18 @@ args = argparser.parse_args()
 
 # Load the trained model
 model = AQUASSlidingBERT.from_pretrained(args.model)
-#model = tf.keras.models.load_model(args.model)
 
 # Preprocess the specific text
 text = "Your specific text here"
-preprocessed_text = text  # Implement this function to preprocess the text
 
-# Convert the preprocessed text into a format compatible with the model
-input_data = np.array([preprocessed_text])
+#preprocess text
+tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
+tokens = tokenizer(text, max_length=max_length, padding="max_length", truncation=True)
+input_tensor = torch.tensor(tokens)
+print("text is preprocessed")
 
-# Feed the text to the model for prediction
-predictions = model.predict(input_data)
+output = model(input_tensor)
 
-# Obtain the classification result
-predicted_class = np.argmax(predictions, axis=1)
+print(output)
+
+
