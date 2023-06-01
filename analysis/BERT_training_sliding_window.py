@@ -50,8 +50,6 @@ def tokenize(texts):
 
     # set max_length
     max_length = 10000
-    #max_length = 2048
-
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -65,7 +63,7 @@ def convert_labels(labels):
     # Convert labels to numerical values
     label_map = {"1": 0, "2": 1, "3": 2}
     labels_conv = [label_map[label] for label in labels]
-    torch.stack(labels_conv)
+    labels_conv = torch.tensor(labels_conv, dtype=torch.long)
     print("labels converted")
     labels_onehot = torch.nn.functional.one_hot(labels_conv, num_classes=3).float()
     return labels_onehot
