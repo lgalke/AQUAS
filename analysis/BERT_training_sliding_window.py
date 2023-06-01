@@ -66,12 +66,13 @@ def convert_labels(labels):
     label_map = {"1": 0, "2": 1, "3": 2}
     labels_conv = [label_map[label] for label in labels]
     print("labels converted")
-    return labels_conv
+    labels_onehot = torch.nn.functional.one_hot(labels_conv, num_classes=3)
+    return labels_onehot
 
 
-def calc_split_ratio(labels_conv):
+def calc_split_ratio(labels_onehot):
     # 80% training 20% validation
-    split_ratio = int(len(labels_conv) * 0.2)
+    split_ratio = int(len(labels_onehot) * 0.2)
     print("split_ratio defined")
     return split_ratio
 
@@ -386,7 +387,7 @@ def main():
     for epoch in range(epochs):
         print("start new epoch")
 
-        train_labels = torch.unsqueeze(train_labels, dim=0)
+        #train_labels = torch.unsqueeze(train_labels, dim=-1)
         print('train_inputs', tf.shape(train_inputs))
         print('train_labels', tf.shape(train_labels))
         print('train_masks', tf.shape(train_masks))
