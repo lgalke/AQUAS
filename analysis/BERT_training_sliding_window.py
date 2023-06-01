@@ -385,6 +385,8 @@ def main():
     # each loop is one epoch
     for epoch in range(epochs):
         print("start new epoch")
+
+        train_labels = torch.unsqueeze(train_labels, dim=0)
         print('train_inputs', tf.shape(train_inputs))
         print('train_labels', tf.shape(train_labels))
         print('train_masks', tf.shape(train_masks))
