@@ -65,6 +65,7 @@ def convert_labels(labels):
     # Convert labels to numerical values
     label_map = {"1": 0, "2": 1, "3": 2}
     labels_conv = [label_map[label] for label in labels]
+    torch.stack(labels_conv)
     print("labels converted")
     labels_onehot = torch.nn.functional.one_hot(labels_conv, num_classes=3).float()
     return labels_onehot
