@@ -64,8 +64,8 @@ def convert_labels(labels):
     label_map = {"1": 0, "2": 1, "3": 2}
     labels_conv = [label_map[label] for label in labels]
     labels_conv = torch.tensor(labels_conv, dtype=torch.long)
-    print("labels converted")
     labels_onehot = torch.nn.functional.one_hot(labels_conv, num_classes=3).float()
+    print("labels converted")
     return labels_onehot
 
 
@@ -291,8 +291,8 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
 
 def evaluate_model(model, val_inputs, val_masks, val_labels):
     assert val_inputs.dim() == 2, "val_inputs should be 2-dimensional"
-    assert val_masks.dim() == 2, "val_masks should be 1-dimensional"
-    assert val_labels.dim() == 1, "val_labels should be 1-dimensional"
+    assert val_masks.dim() == 2, "val_masks should be 2-dimensional"
+    assert val_labels.dim() == 2, "val_labels should be 2-dimensional"
     # Evaluate  model
     val_loader = torch.utils.data.DataLoader(
         list(zip(val_inputs, val_masks)),
