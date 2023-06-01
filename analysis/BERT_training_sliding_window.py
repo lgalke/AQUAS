@@ -25,7 +25,7 @@ import torch
 import torch.nn as nn
 from typing import Optional, Union, Tuple
 from transformers.modeling_outputs import SequenceClassifierOutput
-
+import tensorflow as tf
 
 try:
     import wandb
@@ -385,9 +385,9 @@ def main():
     # each loop is one epoch
     for epoch in range(epochs):
         print("start new epoch")
-        print('train_inputs', train_inputs.get_shape())
-        print('train_labels', train_labels.get_shape())
-        print('train_masks', train_masks.get_shape())
+        print('train_inputs', tf.shape(train_inputs))
+        print('train_labels', tf.shape(train_labels))
+        print('train_masks', tf.shape(train_masks))
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
         acc, f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
