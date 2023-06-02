@@ -26,6 +26,7 @@ import torch.nn as nn
 from typing import Optional, Union, Tuple
 from transformers.modeling_outputs import SequenceClassifierOutput
 import tensorflow as tf
+from sklearn.metrics import accuracy_score
 
 try:
     import wandb
@@ -77,7 +78,7 @@ def calc_split_ratio(labels_onehot):
     return split_ratio
 
 
-def split_train_val_data(tokens, split_ratio, labels_conv):
+def split_train_val_data(tokens, split_ratio, labels_onehot):
     # Split the data into training and validation sets
     train_inputs, val_inputs = np.split(tokens["input_ids"], [split_ratio])
     train_masks, val_masks = np.split(tokens["attention_mask"], [split_ratio])
@@ -316,7 +317,9 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     predictions = torch.tensor(predictions)
 
     # calculate accuracy
-    accuracy = (predictions == val_labels).float().mean().item()
+    #accuracy = (predictions == val_labels).float().mean().item()
+    acc_abs = accuracy_score(predictions, val_labels, normalize= False)
+    acc_rel = accuracy_score(predictions, val_labels)
 
     #calculate f1 score
     f1 = f1_score(val_labels, predictions, average="weighted")
@@ -324,7 +327,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     #calculate accuracy per class
     target_class = ['class scientific', 'class popular science', 'class disinformation']
     class_rep = classification_report(val_labels, predictions, target_names=target_class)
-    return accuracy, f1, class_rep
+    return acc_abs, acc_rel, f1, class_rep
 
 
 def main():
@@ -348,8 +351,8 @@ def main():
 
     texts, labels = load_dataset(args.input_file_csv)
     tokens = tokenize(texts)
-    labels_conv = convert_labels(labels)
-    split_ratio = calc_split_ratio(labels_conv)
+    labels_onehot = convert_labels(labels)
+    split_ratio = calc_split_ratio(labels_onehot)
     (
         train_inputs,
         val_inputs,
@@ -357,7 +360,7 @@ def main():
         val_masks,
         train_labels,
         val_labels,
-    ) = split_train_val_data(tokens, split_ratio, labels_conv)
+    ) = split_train_val_data(tokens, split_ratio, labels_onehot)
 
     train_inputs = torch.tensor(train_inputs)
     val_inputs = torch.tensor(val_inputs)
@@ -392,12 +395,12 @@ def main():
         print('train_labels', tf.shape(train_labels))
         print('train_masks', tf.shape(train_masks))
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
-        acc, f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
+        acc_abs, acc_rel f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
-        wandb.log({"accuracy": acc, "f1": f1, "classification_report" : class_rep})
+        wandb.log({"accuracy_absolut": acc_abs, "accuracy_realtiv": acc_rel , "f1": f1, "classification_report" : class_rep})
 
-        print(f"[{epoch+1}] Accuracy: {acc:.4f} F1-score: {f1:.4f}, Classification_report:{class_rep}")
+        print(f"[{epoch+1}] Accuracy absult: {acc_abs:.4f}, Accuracy relativ: {acc_rel:.4f}, F1-score: {f1:.4f}, Classification_report:{class_rep}")
 
     #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
     model.save_pretrained('models/bert-base_t10k_e3_lr3e-5_mlclass')
