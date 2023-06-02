@@ -318,16 +318,16 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     # calculate accuracy
     #accuracy = (predictions == val_labels).float().mean().item()
-    acc_abs = accuracy_score(val_labels, predictions, normalize= False)
-    acc_rel = accuracy_score(val_labels, predictions)
+    acc = (logits.argmax(dim=-1) == val_labels.argmax(dim=-1)).float().mean()
 
     #calculate f1 score
     f1 = f1_score(val_labels, predictions, average="weighted")
 
     #calculate accuracy per class
     target_class = ['class scientific', 'class popular science', 'class disinformation']
-    class_rep = classification_report(val_labels, predictions, target_names=target_class)
-    return acc_abs, acc_rel, f1, class_rep
+    #class_rep = classification_report(val_labels, predictions, target_names=target_class)
+    class_rep = classification_report(val_labels, torch.sigmoid(logits) > 0.5, target_names=target_class)
+    return acc, acc, f1, class_rep
 
 
 def main():
@@ -395,12 +395,12 @@ def main():
         print('train_labels', tf.shape(train_labels))
         print('train_masks', tf.shape(train_masks))
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
-        acc_abs, acc_rel, f1, class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
+        acc, f1, class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
-        wandb.log({"accuracy_absolut": acc_abs, "accuracy_realtiv": acc_rel , "f1": f1, "classification_report" : class_rep})
+        wandb.log({"accuracy": acc, "f1": f1, "classification_report" : class_rep})
 
-        print(f"[{epoch+1}] Accuracy absult: {acc_abs:.4f}, Accuracy relativ: {acc_rel:.4f}, F1-score: {f1:.4f}, Classification_report:{class_rep}")
+        print(f"[{epoch+1}] Accuracy: {acc:.4f}, F1-score: {f1:.4f}, Classification_report:{class_rep}")
 
     #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
     model.save_pretrained('models/bert-base_t10k_e3_lr3e-5_mlclass')
