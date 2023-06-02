@@ -318,8 +318,8 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     # calculate accuracy
     #accuracy = (predictions == val_labels).float().mean().item()
-    acc_abs = accuracy_score(predictions, val_labels, normalize= False)
-    acc_rel = accuracy_score(predictions, val_labels)
+    acc_abs = accuracy_score(val_labels, predictions, normalize= False)
+    acc_rel = accuracy_score(val_labels, predictions)
 
     #calculate f1 score
     f1 = f1_score(val_labels, predictions, average="weighted")
