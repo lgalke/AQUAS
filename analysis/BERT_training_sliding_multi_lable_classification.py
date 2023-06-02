@@ -82,7 +82,7 @@ def split_train_val_data(tokens, split_ratio, labels_onehot):
     # Split the data into training and validation sets
     train_inputs, val_inputs = np.split(tokens["input_ids"], [split_ratio])
     train_masks, val_masks = np.split(tokens["attention_mask"], [split_ratio])
-    train_labels, val_labels = np.split(labels_conv, [split_ratio])
+    train_labels, val_labels = np.split(labels_onehot, [split_ratio])
     print("train/val -inputs, -masks, -labels created")
     return train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels
 
@@ -395,7 +395,7 @@ def main():
         print('train_labels', tf.shape(train_labels))
         print('train_masks', tf.shape(train_masks))
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
-        acc_abs, acc_rel, f1 , class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
+        acc_abs, acc_rel, f1, class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
         wandb.log({"accuracy_absolut": acc_abs, "accuracy_realtiv": acc_rel , "f1": f1, "classification_report" : class_rep})
