@@ -301,7 +301,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
         batch_size=1,
         shuffle=False,  # Never change to True, else all will break
     )
-
+    val_labels = np.argmax(val_labels, axis=1)
     predictions = []
     with torch.no_grad():
 
@@ -335,8 +335,8 @@ def main():
     parser.add_argument("input_file_csv")
     args = parser.parse_args()
 
-    learning_rate = 3e-5
-    epochs = 3
+    learning_rate = 3e-3
+    epochs = 1
 
     wandb.init(
         # Set the project where this run will be logged
