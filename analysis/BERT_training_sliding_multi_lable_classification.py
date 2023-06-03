@@ -318,7 +318,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     # calculate accuracy
     #accuracy = (predictions == val_labels).float().mean().item()
-    acc = (logits.argmax(dim=-1) == val_labels.argmax(dim=-1)).float().mean()
+    acc = (predictions.argmax(dim=-1) == val_labels.argmax(dim=-1)).float().mean()
 
     #calculate f1 score
     f1 = f1_score(val_labels, predictions, average="weighted")
@@ -326,7 +326,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     #calculate accuracy per class
     target_class = ['class scientific', 'class popular science', 'class disinformation']
     #class_rep = classification_report(val_labels, predictions, target_names=target_class)
-    class_rep = classification_report(val_labels, torch.sigmoid(logits) > 0.5, target_names=target_class)
+    class_rep = classification_report(val_labels, torch.sigmoid(predictions) > 0.5, target_names=target_class)
     return acc, acc, f1, class_rep
 
 
