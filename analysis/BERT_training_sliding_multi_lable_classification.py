@@ -9,13 +9,14 @@ __email__ = "seidlmayer@zbmed.de"
 __version__ = "1 "
 
 BERT_MODEL_IDENTIFIER = "bert-base-uncased"
-#BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
+# BERT_MODEL_IDENTIFIER = "dmis-lab/biobert-v1.1"
 
 import pandas as pd
 from transformers import (
     BertTokenizer,
     BertForSequenceClassification,
-    BertForPreTraining,AutoConfig
+    BertForPreTraining,
+    AutoConfig,
 )
 import numpy as np
 import argparse
@@ -51,7 +52,7 @@ def tokenize(texts):
 
     # set max_length
     max_length = 10000
-    #max_length = 15000
+    # max_length = 15000
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -128,11 +129,11 @@ class AQUASSlidingBERT(BertForSequenceClassification):
         assert batch_size == 1, "Please use batch size = 1"
 
         length = attention_mask.sum(1)
-        #print("length before sliding window", length)
+        # print("length before sliding window", length)
         length = int(length.item())
         if length > 512:
-            #print("Len > 512, sliding")
-            #print(input_ids.size())
+            # print("Len > 512, sliding")
+            # print(input_ids.size())
 
             window_tokens = sliding_window(input_ids.squeeze(0))
             window_attn_masks = sliding_window(attention_mask.squeeze(0))
@@ -140,9 +141,9 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             for tokens, attn_mask in zip(window_tokens, window_attn_masks):
                 tokens = tokens.unsqueeze(0)
                 attn_mask = attn_mask.unsqueeze(0)
-                #print("\tTokens size", tokens.size())
-                #print("\tattn_mask size", attn_mask.size())
-                #print("\tposition_ids", position_ids)
+                # print("\tTokens size", tokens.size())
+                # print("\tattn_mask size", attn_mask.size())
+                # print("\tposition_ids", position_ids)
 
                 outputs = self.bert(
                     tokens,
@@ -165,31 +166,31 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             AQUASpooled_output = torch.stack(AQUASwindowsvectors, dim=0).mean(dim=0)
 
         else:
-            #print("Len <= 512, no slides :(")
+            # print("Len <= 512, no slides :(")
             # They should already be in shape [1,maxlen],
             # no need to squeeze
             # input_ids = input_ids.squeeze(0)
             # attention_mask = attention_mask.squeeze(0)
             # Let's confirm!
-            #print(
-             #   "TYPE CHECK",
-              #  "\n input_ids:",
-               # type(input_ids),
-                #"attention_mask:",
-                #type(attention_mask),
+            # print(
+            #   "TYPE CHECK",
+            #  "\n input_ids:",
+            # type(input_ids),
+            # "attention_mask:",
+            # type(attention_mask),
             #    "position_ids:",
-             #   type(position_ids),
-              #  "head_mask:",
-               # type(head_mask),
-                #"inputs_embeds:",
+            #   type(position_ids),
+            #  "head_mask:",
+            # type(head_mask),
+            # "inputs_embeds:",
             #    type(inputs_embeds),
-             #   "output_attentions:",
-              #  type(output_attentions),
-               # "output hidden_states:",
+            #   "output_attentions:",
+            #  type(output_attentions),
+            # "output hidden_states:",
             #    type(output_hidden_states),
-             #   "return_dict:",
-              #  type(return_dict),
-            #)
+            #   "return_dict:",
+            #  type(return_dict),
+            # )
 
             assert input_ids.dim() == 2, "input_ids should be 2-dimensional: [bsz,seq]"
             assert (
@@ -202,9 +203,9 @@ class AQUASSlidingBERT(BertForSequenceClassification):
             input_ids = input_ids[:, :512]
             attention_mask = attention_mask[:, :512]
 
-            #print("\tInput_ids size", input_ids.size())
-            #print("\tattention_mask size", attention_mask.size())
-            #print("\tposition_ids", position_ids)
+            # print("\tInput_ids size", input_ids.size())
+            # print("\tattention_mask size", attention_mask.size())
+            # print("\tposition_ids", position_ids)
             outputs = self.bert(
                 input_ids,
                 attention_mask=attention_mask,
@@ -301,33 +302,41 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
         batch_size=1,
         shuffle=False,  # Never change to True, else all will break
     )
-    val_labels = np.argmax(val_labels, axis=1)
-    predictions = []
-    with torch.no_grad():
 
+    all_logits = []
+    with torch.no_grad():
         model.eval()
         for batch_input, batch_mask in val_loader:
             outputs = model(input_ids=batch_input, attention_mask=batch_mask)
             logits = outputs.logits
             assert logits.size(1) == 3, "Something went terribly wrong"
-            predicted_class = torch.argmax(logits, dim=1)
-
-            predictions.append(predicted_class.item())
-
-    predictions = torch.tensor(predictions)
+            all_logits.append(logits)
 
     # calculate accuracy
-    #accuracy = (predictions == val_labels).float().mean().item()
-    acc = (predictions.argmax(dim=-1) == val_labels.argmax(dim=-1)).float().mean()
+    # accuracy = (predictions == val_labels).float().mean().item()
 
-    #calculate f1 score
+    # This only makes sense for single label..
+    # ..we keep it to compare with softmax BERT..
+    # ..and because our eval set is actually single label
+    multiclass_accuracy = (
+        (all_logits.argmax(dim=-1) == val_labels.argmax(dim=-1)).float().mean()
+    )
+
+    # Turn logits into binary Yes/No decision per class with threshold 0.5
+    # for multi-label classification (instead of taken just the maximum)
+    predictions = torch.sigmoid(all_logits) > 0.5
+
+    # calculate f1 score
     f1 = f1_score(val_labels, predictions, average="weighted")
 
-    #calculate accuracy per class
-    target_class = ['class scientific', 'class popular science', 'class disinformation']
-    #class_rep = classification_report(val_labels, predictions, target_names=target_class)
-    class_rep = classification_report(val_labels, torch.sigmoid(predictions) > 0.5, target_names=target_class)
-    return acc, acc, f1, class_rep
+    # calculate accuracy per class
+    target_class = ["class scientific", "class popular science", "class disinformation"]
+
+    # classification report
+    class_rep = classification_report(
+        val_labels, predictions, target_names=target_class
+    )
+    return multiclass_accuracy, f1, class_rep
 
 
 def main():
@@ -345,7 +354,6 @@ def main():
         config={
             "learning_rate": learning_rate,
             "epochs": epochs,
-
         },
     )
 
@@ -369,19 +377,19 @@ def main():
     train_labels = torch.tensor(train_labels)
     val_labels = torch.tensor(val_labels)
 
-    #config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
-    #config.update({'problem_type': "multi_label_classification"})
-    #config['num_labels'] = 3
-    #print("config", config)
-
+    # config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
+    # config.update({'problem_type': "multi_label_classification"})
+    # config['num_labels'] = 3
+    # print("config", config)
 
     # OUR AQUASBert INIT
     model = AQUASSlidingBERT.from_pretrained(
         BERT_MODEL_IDENTIFIER,
-        num_labels = 3,
-        problem_type = "multi_label_classification",)
-        #config= config
-      # BioBERT statt bert-base-uncased
+        num_labels=3,
+        problem_type="multi_label_classification",
+    )
+    # config= config
+    # BioBERT statt bert-base-uncased
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     wandb.watch(model)
     print("weight and biases is tracking")
@@ -390,21 +398,24 @@ def main():
     for epoch in range(epochs):
         print("start new epoch")
 
-        #train_labels = torch.unsqueeze(train_labels, dim=-1)
-        print('train_inputs', tf.shape(train_inputs))
-        print('train_labels', tf.shape(train_labels))
-        print('train_masks', tf.shape(train_masks))
+        # train_labels = torch.unsqueeze(train_labels, dim=-1)
+        print("train_inputs", tf.shape(train_inputs))
+        print("train_labels", tf.shape(train_labels))
+        print("train_masks", tf.shape(train_masks))
         train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
         acc, f1, class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
-        wandb.log({"accuracy": acc, "f1": f1, "classification_report" : class_rep})
+        wandb.log({"accuracy": acc, "f1": f1, "classification_report": class_rep})
 
-        print(f"[{epoch+1}] Accuracy: {acc:.4f}, F1-score: {f1:.4f}, Classification_report:{class_rep}")
+        print(
+            f"[{epoch+1}] Accuracy: {acc:.4f}, F1-score: {f1:.4f}, Classification_report:{class_rep}"
+        )
 
-    #torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
-    model.save_pretrained('models/bert-base_t10k_e3_lr3e-5_mlclass')
-    print('done')
+    # torch.save(model, 'models/bert-base_t10k_e4_lr3e-5.p')
+    model.save_pretrained("models/bert-base_t10k_e3_lr3e-5_mlclass")
+    print("done")
+
 
 if __name__ == "__main__":
     main()
