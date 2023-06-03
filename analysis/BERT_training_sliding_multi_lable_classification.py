@@ -312,9 +312,9 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             assert logits.size(1) == 3, "Something went terribly wrong"
             all_logits.append(logits)
 
-    # calculate accuracy
-    # accuracy = (predictions == val_labels).float().mean().item()
+    all_logits = torch.stack(all_logits)
 
+    # Calculate accuracy
     # This only makes sense for single label..
     # ..we keep it to compare with softmax BERT..
     # ..and because our eval set is actually single label
