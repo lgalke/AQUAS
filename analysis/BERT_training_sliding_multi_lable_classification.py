@@ -329,14 +329,14 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     # calculate f1 score
     print('val_labels', val_labels)
     print('predictions', predictions)
-    f1 = f1_score(val_labels, predictions, average="weighted")
+    f1 = f1_score(val_labels>0, predictions, average="weighted")
 
     # calculate accuracy per class
     target_class = ["class scientific", "class popular science", "class disinformation"]
 
     # classification report
     class_rep = classification_report(
-        val_labels, predictions, target_names=target_class
+        val_labels>0, predictions, target_names=target_class
     )
     return multiclass_accuracy, f1, class_rep
 
