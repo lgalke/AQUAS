@@ -51,7 +51,7 @@ def tokenize(texts):
     tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_IDENTIFIER)
 
     # set max_length
-    max_length = 100
+    max_length = 10000
     # max_length = 15000
 
     # Tokenize the text data
@@ -330,9 +330,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     # calculate f1 score
     val_labels= val_labels.long().numpy()
-    print('val_labels', val_labels)
     predictions =predictions.long().numpy()
-    print('predictions', predictions)
     f1 = f1_score(val_labels, predictions, average="weighted")
 
     # calculate accuracy per class
@@ -350,8 +348,8 @@ def main():
     parser.add_argument("input_file_csv")
     args = parser.parse_args()
 
-    learning_rate = 3e-3
-    epochs = 1
+    learning_rate = 3e-5
+    epochs = 3
 
     wandb.init(
         # Set the project where this run will be logged
@@ -403,7 +401,7 @@ def main():
     # each loop is one epoch
     for epoch in range(epochs):
         print("start new epoch")
-        #train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
+        train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
         acc, f1, class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
