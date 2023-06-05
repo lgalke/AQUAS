@@ -195,3 +195,58 @@ wandb:       f1 0.90324
 wandb: 
 wandb: 🚀 View run stellar-admiral-65 at: https://wandb.ai/zbmed/AQUAS/runs/n8zorpxt
 
+
+
+# new run
+## with single label classification 
+1) dashing-waterfall-96: bert-base_t10k_ **e3** _lr3e-5 
+  precision    recall  f1-score   support
+     class scientific       1.00      0.93      0.97       246
+class popular science       0.99      0.98      0.98       321
+ class disinformation       0.90      1.00      0.95       170
+
+             accuracy                           0.97       737
+            macro avg       0.96      0.97      0.97       737
+         weighted avg       0.97      0.97      0.97       737
+
+Run summary:
+wandb:              accuracy 0.97015
+wandb: classification_report                     ...
+wandb:                    f1 0.97038
+
+2) twilight-music-97: bert-base_t10k_ **e4** _lr3e-5
+[4] Accuracy: 0.8548 F1-score: 0.8555, Classification_report:                       precision    recall  f1-score   support
+
+     class scientific       0.76      0.98      0.85       255
+class popular science       0.99      0.78      0.87       321
+ class disinformation       0.84      0.81      0.83       161
+
+             accuracy                           0.85       737
+            macro avg       0.86      0.86      0.85       737
+         weighted avg       0.88      0.85      0.86       737
+
+Run summary:
+wandb:              accuracy 0.85482
+wandb: classification_report                     ...
+wandb:                    f1 0.85548
+
+
+3) flowing-elevator-98: bert-base_t10k_ **e5** _lr3e-5
+[5] Classification_report:                       precision    recall  f1-score   support
+
+     class scientific       1.00      0.99      0.99       244
+class popular science       1.00      0.98      0.99       329
+ class disinformation       0.96      1.00      0.98       164
+
+             accuracy                           0.99       737
+            macro avg       0.99      0.99      0.99       737
+         weighted avg       0.99      0.99      0.99       737
+Run summary:
+wandb:              accuracy 0.98915
+wandb: classification_report                     ...
+wandb:                    f1 0.98921
+
+
+
+## start multilabel classifictation 
+6) valiant-jazz-99: bert-base_t10k_ **e3** _lr3e-5_ **mlclass**
