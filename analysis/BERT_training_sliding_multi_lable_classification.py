@@ -85,7 +85,6 @@ def split_train_val_data(tokens, split_ratio, labels_onehot):
     train_masks, val_masks = np.split(tokens["attention_mask"], [split_ratio])
     train_labels, val_labels = np.split(labels_onehot, [split_ratio])
     print("train/val -inputs, -masks, -labels created")
-    print(val_inputs.dtype)
     return train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels
 
 
@@ -328,6 +327,8 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     predictions = torch.sigmoid(all_logits) > 0.5
 
     # calculate f1 score
+    print('val_labels', val_labels)
+    print('predictions', predictions)
     f1 = f1_score(val_labels, predictions, average="weighted")
 
     # calculate accuracy per class
@@ -398,12 +399,7 @@ def main():
     # each loop is one epoch
     for epoch in range(epochs):
         print("start new epoch")
-
-        # train_labels = torch.unsqueeze(train_labels, dim=-1)
-        print("train_inputs", tf.shape(train_inputs))
-        print("train_labels", tf.shape(train_labels))
-        print("train_masks", tf.shape(train_masks))
-        train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
+        #train_epoch(model, optimizer, train_inputs, train_labels, train_masks)
         acc, f1, class_rep = evaluate_model(model, val_inputs, val_masks, val_labels)
 
         class_rep = str(class_rep)
