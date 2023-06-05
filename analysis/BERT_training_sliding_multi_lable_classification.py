@@ -312,10 +312,9 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             assert logits.size(1) == 3, "Something went terribly wrong"
             all_logits.append(logits)
             print(logits)
-            exit()
 
-    all_logits = torch.stack(all_logits)
-    print('all_logits', all_logits)
+    all_logits = torch.cat(all_logits, dim=0)
+    print('all_logits', all_logits.size())
 
     # Calculate accuracy
     # This only makes sense for single label..
