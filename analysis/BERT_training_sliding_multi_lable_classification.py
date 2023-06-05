@@ -85,7 +85,6 @@ def split_train_val_data(tokens, split_ratio, labels_onehot):
     train_masks, val_masks = np.split(tokens["attention_mask"], [split_ratio])
     train_labels, val_labels = np.split(labels_onehot, [split_ratio])
     print("train/val -inputs, -masks, -labels created")
-    print(val_inputs.dtype)
     return train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels
 
 
