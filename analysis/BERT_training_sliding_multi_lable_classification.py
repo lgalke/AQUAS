@@ -311,6 +311,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             logits = outputs.logits
             assert logits.size(1) == 3, "Something went terribly wrong"
             all_logits.append(logits)
+            print('all_logits', all_logits)
 
     all_logits = torch.stack(all_logits)
 
