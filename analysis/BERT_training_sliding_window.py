@@ -50,7 +50,6 @@ def tokenize(texts):
 
     # set max_length
     max_length = 10000
-    #max_length = 15000
 
     # Tokenize the text data
     tokens = tokenizer(
@@ -292,7 +291,7 @@ def train_epoch(model, optimizer, train_inputs, train_labels, train_masks):
 
 def evaluate_model(model, val_inputs, val_masks, val_labels):
     assert val_inputs.dim() == 2, "val_inputs should be 2-dimensional"
-    assert val_masks.dim() == 1, "val_masks should be 1-dimensional"
+    assert val_masks.dim() == 2, "val_masks should be 2-dimensional"
     assert val_labels.dim() == 2, "val_labels should be 2-dimensional"
     # Evaluate  model
     val_loader = torch.utils.data.DataLoader(
