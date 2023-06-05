@@ -314,7 +314,6 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             print(logits)
 
     all_logits = torch.cat(all_logits, dim=0)
-    print("all_logits", all_logits.size())
 
     # Calculate accuracy
     # This only makes sense for single label..
@@ -331,6 +330,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     # calculate f1 score
     val_labels = val_labels.long().numpy()
     predictions = predictions.long().numpy()
+
     f1 = f1_score(val_labels, predictions, average="weighted")
 
     # calculate accuracy per class
