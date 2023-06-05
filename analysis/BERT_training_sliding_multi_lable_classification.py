@@ -314,7 +314,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
             print(logits)
 
     all_logits = torch.cat(all_logits, dim=0)
-    print('all_logits', all_logits.size())
+    print("all_logits", all_logits.size())
 
     # Calculate accuracy
     # This only makes sense for single label..
@@ -329,8 +329,8 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
     predictions = torch.sigmoid(all_logits) > 0.5
 
     # calculate f1 score
-    val_labels= val_labels.long().numpy()
-    predictions =predictions.long().numpy()
+    val_labels = val_labels.long().numpy()
+    predictions = predictions.long().numpy()
     f1 = f1_score(val_labels, predictions, average="weighted")
 
     # calculate accuracy per class
@@ -365,6 +365,7 @@ def main():
     tokens = tokenize(texts)
     labels_onehot = convert_labels(labels)
     split_ratio = calc_split_ratio(labels_onehot)
+
     (
         train_inputs,
         val_inputs,
@@ -374,12 +375,12 @@ def main():
         val_labels,
     ) = split_train_val_data(tokens, split_ratio, labels_onehot)
 
-    train_inputs = torch.tensor(train_inputs)
-    val_inputs = torch.tensor(val_inputs)
-    train_masks = torch.tensor(train_masks)
-    val_masks = torch.tensor(val_masks)
-    train_labels = torch.tensor(train_labels)
-    val_labels = torch.tensor(val_labels)
+    train_inputs = torch.as_tensor(train_inputs)
+    val_inputs = torch.as_tensor(val_inputs)
+    train_masks = torch.as_tensor(train_masks)
+    val_masks = torch.as_tensor(val_masks)
+    train_labels = torch.as_tensor(train_labels)
+    val_labels = torch.as_tensor(val_labels)
 
     # config = AutoConfig.from_pretrained(BERT_MODEL_IDENTIFIER)
     # config.update({'problem_type': "multi_label_classification"})
