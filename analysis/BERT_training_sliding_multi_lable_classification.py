@@ -338,7 +338,7 @@ def evaluate_model(model, val_inputs, val_masks, val_labels):
 
     # classification report
     class_rep = classification_report(
-        val_labels, predictions, target_names=target_class
+        val_labels>0, predictions, target_names=target_class
     )
     return multiclass_accuracy, f1, class_rep
 
